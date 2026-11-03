@@ -132,7 +132,7 @@ svg{display:block;width:100%;height:auto}
 </div>
 </div>
 <script>
-const F={"subsets": true, "typo": false, "must": true, "mae": false, "reveal": true, "gd": false};
+const F={"subsets": true, "typo": false, "must": true, "mae": true, "reveal": true, "gd": false};
 const PTS=[{"s":"F","i":52,"x":27.0,"y":168.0,"t":0},{"s":"F","i":46,"x":21.0,"y":142.0,"t":0},{"s":"F","i":43,"x":26.0,"y":175.0,"t":0},{"s":"M","i":55,"x":28.0,"y":174.0,"t":1},{"s":"M","i":36,"x":28.0,"y":186.0,"t":1},{"s":"F","i":44,"x":26.0,"y":170.0,"t":1},{"s":"F","i":52,"x":24.0,"y":150.0,"t":0},{"s":"F","i":36,"x":26.0,"y":168.0,"t":0},{"s":"F","i":43,"x":27.0,"y":166.0,"t":0},{"s":"M","i":30,"x":28.0,"y":182.0,"t":0},{"s":"F","i":41,"x":26.0,"y":173.0,"t":0},{"s":"F","i":32,"x":20.0,"y":162.0,"t":1},{"s":"M","i":46,"x":28.0,"y":175.0,"t":0},{"s":"M","i":44,"x":29.0,"y":183.0,"t":1},{"s":"F","i":46,"x":28.0,"y":174.0,"t":0},{"s":"M","i":46,"x":29.0,"y":182.0,"t":1},{"s":"M","i":35,"x":27.0,"y":170.0,"t":0},{"s":"M","i":27,"x":26.9,"y":173.0,"t":1},{"s":"M","i":36,"x":25.0,"y":167.0,"t":0},{"s":"M","i":34,"x":30.0,"y":180.0,"t":0},{"s":"M","i":37,"x":27.0,"y":171.0,"t":0},{"s":"M","i":41,"x":30.0,"y":185.0,"t":1},{"s":"F","i":42,"x":25.0,"y":165.0,"t":0},{"s":"M","i":51,"x":29.0,"y":175.0,"t":1},{"s":"M","i":43,"x":30.0,"y":174.0,"t":0},{"s":"M","i":34,"x":28.0,"y":170.0,"t":0},{"s":"F","i":38,"x":26.0,"y":158.0,"t":0},{"s":"M","i":41,"x":29.0,"y":183.0,"t":0},{"s":"F","i":45,"x":27.0,"y":165.0,"t":0},{"s":"M","i":34,"x":32.0,"y":194.0,"t":1},{"s":"F","i":43,"x":23.0,"y":156.0,"t":0},{"s":"M","i":45,"x":29.0,"y":181.0,"t":0},{"s":"M","i":41,"x":28.0,"y":190.0,"t":0},{"s":"F","i":47,"x":27.0,"y":168.0,"t":0},{"s":"F","i":32,"x":26.0,"y":162.0,"t":1},{"s":"M","i":45,"x":29.0,"y":177.0,"t":0}];
 const SEX={M:'var(--m)',F:'var(--f)',N:'var(--n)'};
 const MUST=[{s:'M',a:79.2,b:3.60},{s:'F',a:95.6,b:2.77}];
@@ -185,7 +185,7 @@ function drawMetrics(){ const {tr,te}=split(); const mt=metrics(tr),me=metrics(t
   if(F.subsets){ $('tstbox').hidden=!S.locked; $('legtest').hidden=!S.locked; if(me){$('tst-h').textContent='Fora do treino (n = '+te.length+')';$('tst-mse').textContent='MSE '+fmt(me.mse,1);$('tst-sm').textContent='RMSE '+fmt(me.rmse,2)+' cm'+(F.mae?' · MAE '+fmt(me.mae,2)+' cm':'');} }
   const xl=S.center?'(x − '+fmt(XMEAN,1)+')':'x';
   $('eq').innerHTML='ŷ = <b>'+fmt(S.b,2)+'</b> · '+xl+' + <b>'+fmt(S.a,1)+'</b>';
-  if(F.reveal){ if(S.reveal){const o=ols(tr),mo=metrics(tr,o.a,o.b);$('bestinfo').innerHTML='<span class="best">a = '+fmt(o.b,2)+', b = '+fmt(o.a,1)+'</span>, MSE '+fmt(mo.mse,1)+(F.mae?', MAE '+fmt(mo.mae,2):'')+(F.subsets&&me?' · fora do treino MSE '+fmt(metrics(te,o.a,o.b).mse,1):'');} else $('bestinfo').textContent=''; } }
+  if(F.reveal){ if(S.reveal){const o=ols(tr),mo=metrics(tr,o.a,o.b);$('bestinfo').innerHTML='<span class="best">a = '+fmt(o.b,2)+', b = '+fmt(o.a,1)+'</span>, MSE '+fmt(mo.mse,1)+(F.mae?', MAE '+fmt(mo.mae,2):'')+(F.subsets&&me?' · fora do treino MSE '+fmt(metrics(te,o.a,o.b).mse,1)+', MAE '+fmt(metrics(te,o.a,o.b).mae,2):'');} else $('bestinfo').textContent=''; } }
 
 let heatCache=null;
 function hex(s){s=s.trim().replace('#','');return [0,2,4].map(i=>parseInt(s.substr(i,2),16));}
