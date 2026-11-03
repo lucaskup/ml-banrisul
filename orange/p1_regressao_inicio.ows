@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="P1 – Regressão (seguro)" description="Custo anual de seguro saúde: regressão linear e kNN">
+<nodes>
+<node id="0" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" version="" title="insurance.csv" position="(100, 250)" />
+<node id="1" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Data Table" position="(350, 100)" />
+<node id="2" name="Feature Statistics" qualified_name="Orange.widgets.data.owfeaturestatistics.OWFeatureStatistics" project_name="Orange3" version="" title="Feature Statistics" position="(350, 250)" />
+<node id="3" name="Scatter Plot" qualified_name="Orange.widgets.visualize.owscatterplot.OWScatterPlot" project_name="Orange3" version="" title="Scatter Plot" position="(350, 400)" />
+<node id="4" name="Distributions" qualified_name="Orange.widgets.visualize.owdistributions.OWDistributions" project_name="Orange3" version="" title="Distributions" position="(350, 550)" />
+<node id="5" name="Linear Regression" qualified_name="Orange.widgets.model.owlinearregression.OWLinearRegression" project_name="Orange3" version="" title="Linear Regression" position="(650, 150)" />
+<node id="6" name="kNN" qualified_name="Orange.widgets.model.owknn.OWKNNLearner" project_name="Orange3" version="" title="kNN" position="(650, 300)" />
+<node id="7" name="Preprocess" qualified_name="Orange.widgets.data.owpreprocess.OWPreprocess" project_name="Orange3" version="" title="Preprocess (normalizar)" position="(650, 450)" />
+<node id="8" name="Test and Score" qualified_name="Orange.widgets.evaluate.owtestandscore.OWTestAndScore" project_name="Orange3" version="" title="Test and Score" position="(900, 220)" />
+<node id="9" name="Predictions" qualified_name="Orange.widgets.evaluate.owpredictions.OWPredictions" project_name="Orange3" version="" title="Predictions" position="(900, 400)" />
+</nodes><links>
+<link id="0" source_node_id="0" sink_node_id="1" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+<link id="1" source_node_id="0" sink_node_id="2" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+<link id="2" source_node_id="0" sink_node_id="3" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+<link id="3" source_node_id="0" sink_node_id="4" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+</links><annotations>
+<text id="0" type="text/plain" rect="(80, 40, 480, 40)" font-family="Helvetica" font-size="13">Prática 1 – Regressão: quanto custa o seguro desta pessoa?
+Target: custo_anual (US$/ano). Dados: 1.338 segurados.</text>
+<text id="1" type="text/plain" rect="(620, 40, 420, 90)" font-family="Helvetica" font-size="13">Passo A: ligue File → Test and Score (Data), e os dois modelos → Test and Score (Learner).
+Passo B: ligue File → Linear Regression → Predictions, e File → Predictions (Data).
+Passo C (quebra): Preprocess → kNN (Preprocessor), com Normalize Features marcado.</text>
+<text id="2" type="text/plain" rect="(80, 640, 500, 40)" font-family="Helvetica" font-size="13">Alvo: ficar com RMSE abaixo de 6.500 em validação cruzada (10 folds).</text>
+</annotations><thumbnail /><node_properties>
+<properties node_id="0" format="literal">{&#x27;source&#x27;: 1, &#x27;recent_urls&#x27;: [&#x27;https://lucaskup.github.io/ml-banrisul/data/insurance.csv&#x27;], &#x27;url&#x27;: &#x27;https://lucaskup.github.io/ml-banrisul/data/insurance.csv&#x27;, &#x27;sheet_names&#x27;: {}, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 1}</properties>
+<properties node_id="8" format="literal">{&#x27;n_folds&#x27;: 3, &#x27;resampling&#x27;: 0, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 3}</properties>
+<properties node_id="6" format="literal">{&#x27;n_neighbors&#x27;: 5, &#x27;metric_index&#x27;: 0, &#x27;weight_index&#x27;: 0, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 1}</properties>
+</node_properties></scheme>

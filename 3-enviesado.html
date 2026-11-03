@@ -148,7 +148,7 @@ const PTS=[{"s":"F","i":52,"x":27.0,"y":168.0,"t":0},{"s":"F","i":46,"x":21.0,"y
 const SEX={M:'var(--m)',F:'var(--f)',N:'var(--n)'};
 const MUST=[{s:'M',a:79.2,b:3.60},{s:'F',a:95.6,b:2.77}];
 const XMEAN=PTS.reduce((s,p)=>s+p.x,0)/PTS.length;
-const S={a:(F.gd?100:150),b:(F.gd?2.8:1.2),center:false,sub:F.subsets?'M':'all',seed:1,eta:1e-3,typo:false,must:false,resid:false,reveal:false,locked:false,trail:[]};
+const S={a:(F.gd?10:150),b:(F.gd?4.5:1.2),center:false,sub:F.subsets?'M':'all',seed:1,eta:1e-3,typo:false,must:false,resid:false,reveal:false,locked:false,trail:[]};
 const $=id=>document.getElementById(id);
 const on=(id,ev,fn)=>{const e=$(id);if(e)e.addEventListener(ev,fn);};
 
@@ -208,7 +208,8 @@ function drawHeat(force){ if(!F.gd) return; const {tr}=split(); const R=ranges()
     for(let k=0;k<W*H;k++){const t=1-(vals[k]-lo)/(hi-lo);const q=Math.pow(t,2.2);img.data[4*k]=c0[0]+(c1[0]-c0[0])*q;img.data[4*k+1]=c0[1]+(c1[1]-c0[1])*q;img.data[4*k+2]=c0[2]+(c1[2]-c0[2])*q;img.data[4*k+3]=255;}
     ctx.putImageData(img,0,0); }
   const px=a=>(a-R.a[0])/(R.a[1]-R.a[0])*W, py=b=>(R.b[1]-b)/(R.b[1]-R.b[0])*H;
-  let g='<g>'; S.trail.forEach((t,k)=>{ if(k>0){const u=S.trail[k-1];g+='<line x1="'+px(u[0])+'" y1="'+py(u[1])+'" x2="'+px(t[0])+'" y2="'+py(t[1])+'" stroke="var(--you)" stroke-width="1.5" opacity=".8"/>';} g+='<circle cx="'+px(t[0])+'" cy="'+py(t[1])+'" r="2.5" fill="var(--you)"/>'; }); g+='</g>';
+  const every=Math.max(1,Math.ceil(S.trail.length/400)), last=S.trail.length-1;
+  let g='<g>'; S.trail.forEach((t,k)=>{ if(k>0){const u=S.trail[k-1];g+='<line x1="'+px(u[0])+'" y1="'+py(u[1])+'" x2="'+px(t[0])+'" y2="'+py(t[1])+'" stroke="var(--you)" stroke-width="1.5" opacity=".8"/>';} if(k%every===0||k===last) g+='<circle cx="'+px(t[0])+'" cy="'+py(t[1])+'" r="2.5" fill="var(--you)"/>'; }); g+='</g>';
   if(S.reveal){const o=ols(tr);g+='<circle cx="'+px(o.a)+'" cy="'+py(o.b)+'" r="6" fill="none" stroke="var(--best)" stroke-width="2.5"/>';}
   g+='<circle cx="'+px(S.a)+'" cy="'+py(S.b)+'" r="6" fill="var(--you)" stroke="#fff" stroke-width="2"/>';
   g+='<text x="6" y="14" style="font-size:11px;fill:var(--ink-2)">a = '+fmt(R.b[1],0)+'</text><text x="6" y="'+(H-6)+'" style="font-size:11px;fill:var(--ink-2)">a = '+fmt(R.b[0],0)+'</text>';
@@ -220,7 +221,7 @@ function gdSteps(n){ const {tr}=split(); const R=ranges(); if(!S.trail.length)S.
   for(let k=0;k<n;k++){const [ga,gb]=grad(tr,S.a,S.b); S.a-=S.eta*ga; S.b-=S.eta*gb; S.trail.push([S.a,S.b]); if(!isFinite(S.a)||Math.abs(S.a)>1e6||Math.abs(S.b)>1e5){div=true;break;} }
   if(div){S.a=Math.min(Math.max(S.a,R.a[0]),R.a[1]);S.b=Math.min(Math.max(S.b,R.b[0]),R.b[1]);$('gdmsg').innerHTML='<span class="warn">divergiu: η grande demais para esta escala de x</span>';}
   else{const [ga,gb]=grad(tr,S.a,S.b);$('gdmsg').textContent='gradiente (∂a = '+fmt(gb,2)+', ∂b = '+fmt(ga,2)+')';}
-  if(S.trail.length>400)S.trail=S.trail.slice(-400); render(); }
+  if(S.trail.length>5000)S.trail=S.trail.slice(-5000); render(); }
 
 on('chips','click',e=>{const c=e.target.closest('.chip');if(!c)return;S.sub=c.dataset.sub;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===c));S.trail=[];S.reveal=false;S.locked=false;unlockUI();render();});
 on('seed','input',e=>{S.seed=+e.target.value||1;if(S.sub==='rand'){S.locked=false;unlockUI();render();}});
@@ -239,6 +240,7 @@ on('unlock','click',()=>{S.locked=false;S.reveal=false;unlockUI();render();});
 on('eta','input',e=>{S.eta=Math.pow(10,+e.target.value);$('etav').textContent='η = '+S.eta.toExponential(1).replace('e','·10^');});
 on('step1','click',()=>gdSteps(1));
 on('step20','click',()=>gdSteps(20));
+on('step200','click',()=>gdSteps(200));
 on('clear','click',()=>{S.trail=[];$('gdmsg').textContent='';drawHeat();});
 on('heat','click',e=>{const r=e.target.getBoundingClientRect();const R=ranges();const fx=(e.clientX-r.left)/r.width,fy=(e.clientY-r.top)/r.height;S.a=R.a[0]+fx*(R.a[1]-R.a[0]);S.b=R.b[1]-fy*(R.b[1]-R.b[0]);S.trail=[];render();});
 matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>render(true));
