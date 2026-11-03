@@ -22,6 +22,8 @@ def scheme(title,desc,nodes,links,notes,props):
     xs.append('</node_properties></scheme>')
     return '\n'.join(xs)
 def fileprops(fname): return {'source':1,'recent_urls':[BASE+fname],'url':BASE+fname,'sheet_names':{},'controlAreaVisible':True,'__version__':1}
+# Preprocess já com Normalize Features em [0, 1] (Scale.NormalizeBySpan_ZeroBased = 3), que é o que o guia pede para o kNN
+PREPROPS={'storedsettings':{'name':'','preprocessors':[('orange.preprocess.scale',{'method':3})]},'controlAreaVisible':True,'__version__':2}
 
 def p1(full):
     nodes=[('file','File',100,250,'insurance.csv'),('tab','Data Table',350,100),('fs','Feature Statistics',350,250),('sp','Scatter Plot',350,400),('dist','Distributions',350,550),
@@ -31,7 +33,7 @@ def p1(full):
     notes=[(80,40,480,40,'Prática 1 – Regressão: quanto custa o seguro desta pessoa?\nTarget: custo_anual (US$/ano). Dados: 1.338 segurados.'),
            (620,40,420,90,'Passo A: ligue File → Test and Score (Data), e os dois modelos → Test and Score (Learner).\nPasso B: ligue File → Linear Regression → Predictions, e File → Predictions (Data).\nPasso C (quebra): Preprocess → kNN (Preprocessor), com Normalize Features marcado.'),
            (80,640,500,40,'Alvo: ficar com RMSE abaixo de 6.500 em validação cruzada (10 folds).')]
-    props={'file':fileprops('insurance.csv'),'ts':{'n_folds':2,'resampling':0,'controlAreaVisible':True,'__version__':3},'knn':{'n_neighbors':5,'metric_index':0,'weight_index':0,'controlAreaVisible':True,'__version__':1}}
+    props={'file':fileprops('insurance.csv'),'pre':PREPROPS,'ts':{'n_folds':2,'resampling':0,'controlAreaVisible':True,'__version__':3},'knn':{'n_neighbors':5,'metric_index':0,'weight_index':0,'controlAreaVisible':True,'__version__':1}}
     # n_folds index: Orange NFolds=[2,3,5,10,20] -> index 3 = 10
     props['ts']['n_folds']=3
     return scheme('P1 – Regressão (seguro)','Custo anual de seguro saúde: regressão linear e kNN',nodes,links,notes,props)
@@ -44,7 +46,7 @@ def p2(full):
     notes=[(80,40,520,40,'Prática 2 – Classificação: aprovar ou negar o crédito?\nTarget: risco (bom/mau). 1.000 solicitantes, 30 % maus pagadores.'),
            (620,40,460,90,'Passo A: File → Test and Score (Data); Logistic Regression e kNN → Test and Score (Learner).\nPasso B: Test and Score → Confusion Matrix.\nPasso C: Preprocess (Normalize Features) → kNN. Passo D: File → Logistic Regression → Predictions.'),
            (80,520,520,60,'Custo: cada mau aprovado custa 5; cada bom negado custa 1.\nCusto do modelo = 5 × (maus aprovados) + 1 × (bons negados). Qual modelo custa menos?')]
-    props={'file':fileprops('german_credit.csv'),'ts':{'n_folds':3,'resampling':0,'controlAreaVisible':True,'__version__':3},'knn':{'n_neighbors':5,'metric_index':0,'weight_index':0,'controlAreaVisible':True,'__version__':1}}
+    props={'file':fileprops('german_credit.csv'),'pre':PREPROPS,'ts':{'n_folds':3,'resampling':0,'controlAreaVisible':True,'__version__':3},'knn':{'n_neighbors':5,'metric_index':0,'weight_index':0,'controlAreaVisible':True,'__version__':1}}
     return scheme('P2 – Classificação (crédito)','Risco de crédito: regressão logística e kNN',nodes,links,notes,props)
 
 def p3(full):

@@ -33,6 +33,7 @@ Passo C: Preprocess (Normalize Features) → kNN. Passo D: File → Logistic Reg
 Custo do modelo = 5 × (maus aprovados) + 1 × (bons negados). Qual modelo custa menos?</text>
 </annotations><thumbnail /><node_properties>
 <properties node_id="0" format="literal">{&#x27;source&#x27;: 1, &#x27;recent_urls&#x27;: [&#x27;https://lucaskup.github.io/ml-banrisul/data/german_credit.csv&#x27;], &#x27;url&#x27;: &#x27;https://lucaskup.github.io/ml-banrisul/data/german_credit.csv&#x27;, &#x27;sheet_names&#x27;: {}, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 1}</properties>
+<properties node_id="6" format="literal">{&#x27;storedsettings&#x27;: {&#x27;name&#x27;: &#x27;&#x27;, &#x27;preprocessors&#x27;: [(&#x27;orange.preprocess.scale&#x27;, {&#x27;method&#x27;: 3})]}, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 2}</properties>
 <properties node_id="7" format="literal">{&#x27;n_folds&#x27;: 3, &#x27;resampling&#x27;: 0, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 3}</properties>
 <properties node_id="5" format="literal">{&#x27;n_neighbors&#x27;: 5, &#x27;metric_index&#x27;: 0, &#x27;weight_index&#x27;: 0, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 1}</properties>
 </node_properties></scheme>
