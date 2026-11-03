@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agrupamento 2. Escolher k</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f4f1;--panel:#ffffff;--ink:#17202b;--ink-2:#55616e;--line:#d6dad4;--grid:#e9ebe6;
+  --m:#2f6fde;--f:#e0559e;--n:#9aa3ad;--you:#0e7c7b;--best:#d98c1f;--err:#c6303e;
+  --c0:#2f6fde;--c1:#e0559e;--c2:#d98c1f;--c3:#0e7c7b;--c4:#7b4fd6;--c5:#5f9e2f;--c6:#c6303e;--c7:#8a6d3b;--c8:#1f8fb8;--c9:#b0437d;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#141a21;--panel:#1d252e;--ink:#eef1f4;--ink-2:#a9b4bf;--line:#34404c;--grid:#283239;
+  --m:#6d9bf2;--f:#f07bb8;--n:#6f7a86;--you:#3fd0c5;--best:#f0b04a;--err:#ff6b78;
+  --c0:#6d9bf2;--c1:#f07bb8;--c2:#f0b04a;--c3:#3fd0c5;--c4:#a98bf0;--c5:#8ac65a;--c6:#ff6b78;--c7:#c9a26e;--c8:#5fc0e8;--c9:#e07ab3}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#141a21;--panel:#1d252e;--ink:#eef1f4;--ink-2:#a9b4bf;--line:#34404c;--grid:#283239;
+  --m:#6d9bf2;--f:#f07bb8;--n:#6f7a86;--you:#3fd0c5;--best:#f0b04a;--err:#ff6b78;
+  --c0:#6d9bf2;--c1:#f07bb8;--c2:#f0b04a;--c3:#3fd0c5;--c4:#a98bf0;--c5:#8ac65a;--c6:#ff6b78;--c7:#c9a26e;--c8:#5fc0e8;--c9:#e07ab3}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+header h1{font-size:1.9rem;font-weight:700;margin:0 0 4px;letter-spacing:-.01em}
+header p{margin:0;color:var(--ink-2);max-width:70ch}
+.eq{font-size:1.35rem;font-weight:500;margin:14px 0 6px}
+.eq b{font-weight:700;color:var(--you)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:.92rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--you);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;margin-top:12px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.panel h2{font-size:1rem;font-weight:700;margin:0 0 8px}
+svg{display:block;width:100%;height:auto}
+.axis text{fill:var(--ink-2);font-size:11px}
+.axis line,.axis path{stroke:var(--line)}
+.gridl{stroke:var(--grid)}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px 10px;margin:8px 0}
+.ctl label{font-weight:500}
+.ctl input[type=range]{width:100%;accent-color:var(--you)}
+.ctl output{min-width:3.2em;text-align:right;font-weight:700}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.met{border-top:3px solid var(--you);padding:6px 0 0}
+.met.test{border-top-color:var(--n)}
+.met h3{font-size:.85rem;font-weight:500;color:var(--ink-2);margin:0 0 2px}
+.met .big{font-size:1.6rem;font-weight:700;line-height:1.1}
+.met .sm{font-size:.85rem;color:var(--ink-2)}
+.row{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:8px 0;font-size:.95rem}
+.row label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.btn{font:inherit;font-size:.92rem;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--you);border-color:var(--you);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.note{color:var(--ink-2);font-size:.9rem;margin:8px 0 0}
+.note a{color:inherit}
+.dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;margin-right:.3em;vertical-align:middle}
+.warn{color:var(--err);font-weight:500}
+.best{color:var(--best);font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.task{background:var(--panel);border-left:4px solid var(--you);border-radius:0 10px 10px 0;padding:10px 14px;margin:14px 0 4px;max-width:78ch}
+.task p{margin:0}.task p+p{margin-top:6px;color:var(--ink-2)}
+.steps{color:var(--ink-2);font-size:.9rem;margin-bottom:6px}
+.ct{border-collapse:collapse;font-size:.9rem;margin-top:8px}
+.ct th,.ct td{border:1px solid var(--line);padding:4px 10px;text-align:right}
+.ct th{font-weight:500;color:var(--ink-2)}
+.ct td:first-child,.ct th:first-child{text-align:left}
+.leg svg{display:inline-block;width:1em;height:1em;vertical-align:-.15em;margin-right:.3em}
+#shapeleg:not([hidden]){display:inline-flex;flex-wrap:wrap;gap:8px 16px}
+#sc{cursor:crosshair}
+.nav{margin-top:22px;display:flex;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="steps">Agrupamento · prática 2 de 3</div>
+  <h1>Escolher k</h1>
+  <p>O k-means precisa receber o número de grupos. Aqui o algoritmo roda 10 vezes para cada k (inicialização k-means++) e fica com a melhor execução. Duas medidas ajudam a escolher: a inércia, que sempre cai quando k cresce, e a silhueta, que mede se cada ponto está mais perto do seu grupo do que do grupo vizinho.</p>
+</header>
+<div class="task"><p>Deslize k de 1 a 10. A inércia sempre cai: onde ela para de cair rápido (o cotovelo)? Qual k tem a maior silhueta média?</p><p>Depois revele as espécies. O k escolhido coincide com as 3 espécies? Troque para as medidas de sépala e repita: o cotovelo continua claro?</p></div>
+
+<div class="chips" id="chips">
+  <button class="chip" data-pair="petal" aria-pressed="true">pétala: comprimento × largura</button>
+  <button class="chip" data-pair="sepal" aria-pressed="false">sépala: comprimento × largura</button>
+  <button class="chip" data-pair="mix" aria-pressed="false">comprimento: sépala × pétala</button>
+  <button class="chip" data-pair="all" aria-pressed="false">as 4 medidas</button>
+</div>
+<p class="note" id="pairnote"></p>
+
+<div class="grid">
+  <div class="panel">
+    <svg id="sc" viewBox="0 0 640 420" role="img" aria-label="Dispersão com os grupos encontrados"></svg>
+    <div class="row" id="legend">
+      <span><svg viewBox="0 0 16 16" style="display:inline-block;width:1em;height:1em;vertical-align:-.15em;margin-right:.3em"><path d="M8 1L15 8L8 15L1 8Z" fill="var(--you)" stroke="var(--ink)" stroke-width="1.5"/></svg>centróide</span>
+      <span id="shapeleg" hidden></span>
+      <label><input type="checkbox" id="regions" checked> mostrar regiões</label>
+    </div>
+    <h2 style="margin-top:14px">Silhueta de cada ponto</h2>
+    <svg id="sil" viewBox="0 0 640 220" role="img" aria-label="Silhueta de cada ponto, agrupada por grupo"></svg>
+    <p class="note">Cada barra é um ponto, ordenadas por grupo. Perto de 1: bem dentro do seu grupo. Perto de 0: na fronteira. Negativa: mais perto de outro grupo. A linha tracejada é a média.</p>
+  </div>
+  <div class="panel">
+    <div class="ctl">
+      <label for="k">k</label><input type="range" id="k" min="1" max="10" step="1" value="3"><output id="kv">3</output>
+    </div>
+    <div class="metrics">
+      <div class="met"><h3>Inércia J</h3><div class="big" id="J">—</div><div class="sm">melhor de 10 execuções</div></div>
+      <div class="met test"><h3>Silhueta média</h3><div class="big" id="sil-m">—</div><div class="sm">de −1 a 1; só faz sentido com k ≥ 2</div></div>
+    </div>
+    <h2 style="margin-top:18px">Inércia por k (cotovelo)</h2>
+    <svg id="elbow" viewBox="0 0 320 170" role="img" aria-label="Inércia em função de k"></svg>
+    <h2 style="margin-top:14px">Silhueta média por k</h2>
+    <svg id="silk" viewBox="0 0 320 170" role="img" aria-label="Silhueta média em função de k"></svg>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="reveal">Revelar as espécies</button>
+    </div>
+    <div id="ctab"></div>
+  </div>
+</div>
+<p class="nav note"><a href="c1-passo-a-passo.html">← Anterior: passo a passo</a><a href="index.html">Todas as práticas</a><a href="c3-limitacoes.html">Próxima: Limitações →</a></p>
+
+</div>
+<script>
+
+const IRIS=[[5.1,3.5,1.4,0.2,0],[4.9,3.0,1.4,0.2,0],[4.7,3.2,1.3,0.2,0],[4.6,3.1,1.5,0.2,0],[5.0,3.6,1.4,0.2,0],[5.4,3.9,1.7,0.4,0],[4.6,3.4,1.4,0.3,0],[5.0,3.4,1.5,0.2,0],[4.4,2.9,1.4,0.2,0],[4.9,3.1,1.5,0.1,0],[5.4,3.7,1.5,0.2,0],[4.8,3.4,1.6,0.2,0],[4.8,3.0,1.4,0.1,0],[4.3,3.0,1.1,0.1,0],[5.8,4.0,1.2,0.2,0],[5.7,4.4,1.5,0.4,0],[5.4,3.9,1.3,0.4,0],[5.1,3.5,1.4,0.3,0],[5.7,3.8,1.7,0.3,0],[5.1,3.8,1.5,0.3,0],[5.4,3.4,1.7,0.2,0],[5.1,3.7,1.5,0.4,0],[4.6,3.6,1.0,0.2,0],[5.1,3.3,1.7,0.5,0],[4.8,3.4,1.9,0.2,0],[5.0,3.0,1.6,0.2,0],[5.0,3.4,1.6,0.4,0],[5.2,3.5,1.5,0.2,0],[5.2,3.4,1.4,0.2,0],[4.7,3.2,1.6,0.2,0],[4.8,3.1,1.6,0.2,0],[5.4,3.4,1.5,0.4,0],[5.2,4.1,1.5,0.1,0],[5.5,4.2,1.4,0.2,0],[4.9,3.1,1.5,0.2,0],[5.0,3.2,1.2,0.2,0],[5.5,3.5,1.3,0.2,0],[4.9,3.6,1.4,0.1,0],[4.4,3.0,1.3,0.2,0],[5.1,3.4,1.5,0.2,0],[5.0,3.5,1.3,0.3,0],[4.5,2.3,1.3,0.3,0],[4.4,3.2,1.3,0.2,0],[5.0,3.5,1.6,0.6,0],[5.1,3.8,1.9,0.4,0],[4.8,3.0,1.4,0.3,0],[5.1,3.8,1.6,0.2,0],[4.6,3.2,1.4,0.2,0],[5.3,3.7,1.5,0.2,0],[5.0,3.3,1.4,0.2,0],[7.0,3.2,4.7,1.4,1],[6.4,3.2,4.5,1.5,1],[6.9,3.1,4.9,1.5,1],[5.5,2.3,4.0,1.3,1],[6.5,2.8,4.6,1.5,1],[5.7,2.8,4.5,1.3,1],[6.3,3.3,4.7,1.6,1],[4.9,2.4,3.3,1.0,1],[6.6,2.9,4.6,1.3,1],[5.2,2.7,3.9,1.4,1],[5.0,2.0,3.5,1.0,1],[5.9,3.0,4.2,1.5,1],[6.0,2.2,4.0,1.0,1],[6.1,2.9,4.7,1.4,1],[5.6,2.9,3.6,1.3,1],[6.7,3.1,4.4,1.4,1],[5.6,3.0,4.5,1.5,1],[5.8,2.7,4.1,1.0,1],[6.2,2.2,4.5,1.5,1],[5.6,2.5,3.9,1.1,1],[5.9,3.2,4.8,1.8,1],[6.1,2.8,4.0,1.3,1],[6.3,2.5,4.9,1.5,1],[6.1,2.8,4.7,1.2,1],[6.4,2.9,4.3,1.3,1],[6.6,3.0,4.4,1.4,1],[6.8,2.8,4.8,1.4,1],[6.7,3.0,5.0,1.7,1],[6.0,2.9,4.5,1.5,1],[5.7,2.6,3.5,1.0,1],[5.5,2.4,3.8,1.1,1],[5.5,2.4,3.7,1.0,1],[5.8,2.7,3.9,1.2,1],[6.0,2.7,5.1,1.6,1],[5.4,3.0,4.5,1.5,1],[6.0,3.4,4.5,1.6,1],[6.7,3.1,4.7,1.5,1],[6.3,2.3,4.4,1.3,1],[5.6,3.0,4.1,1.3,1],[5.5,2.5,4.0,1.3,1],[5.5,2.6,4.4,1.2,1],[6.1,3.0,4.6,1.4,1],[5.8,2.6,4.0,1.2,1],[5.0,2.3,3.3,1.0,1],[5.6,2.7,4.2,1.3,1],[5.7,3.0,4.2,1.2,1],[5.7,2.9,4.2,1.3,1],[6.2,2.9,4.3,1.3,1],[5.1,2.5,3.0,1.1,1],[5.7,2.8,4.1,1.3,1],[6.3,3.3,6.0,2.5,2],[5.8,2.7,5.1,1.9,2],[7.1,3.0,5.9,2.1,2],[6.3,2.9,5.6,1.8,2],[6.5,3.0,5.8,2.2,2],[7.6,3.0,6.6,2.1,2],[4.9,2.5,4.5,1.7,2],[7.3,2.9,6.3,1.8,2],[6.7,2.5,5.8,1.8,2],[7.2,3.6,6.1,2.5,2],[6.5,3.2,5.1,2.0,2],[6.4,2.7,5.3,1.9,2],[6.8,3.0,5.5,2.1,2],[5.7,2.5,5.0,2.0,2],[5.8,2.8,5.1,2.4,2],[6.4,3.2,5.3,2.3,2],[6.5,3.0,5.5,1.8,2],[7.7,3.8,6.7,2.2,2],[7.7,2.6,6.9,2.3,2],[6.0,2.2,5.0,1.5,2],[6.9,3.2,5.7,2.3,2],[5.6,2.8,4.9,2.0,2],[7.7,2.8,6.7,2.0,2],[6.3,2.7,4.9,1.8,2],[6.7,3.3,5.7,2.1,2],[7.2,3.2,6.0,1.8,2],[6.2,2.8,4.8,1.8,2],[6.1,3.0,4.9,1.8,2],[6.4,2.8,5.6,2.1,2],[7.2,3.0,5.8,1.6,2],[7.4,2.8,6.1,1.9,2],[7.9,3.8,6.4,2.0,2],[6.4,2.8,5.6,2.2,2],[6.3,2.8,5.1,1.5,2],[6.1,2.6,5.6,1.4,2],[7.7,3.0,6.1,2.3,2],[6.3,3.4,5.6,2.4,2],[6.4,3.1,5.5,1.8,2],[6.0,3.0,4.8,1.8,2],[6.9,3.1,5.4,2.1,2],[6.7,3.1,5.6,2.4,2],[6.9,3.1,5.1,2.3,2],[5.8,2.7,5.1,1.9,2],[6.8,3.2,5.9,2.3,2],[6.7,3.3,5.7,2.5,2],[6.7,3.0,5.2,2.3,2],[6.3,2.5,5.0,1.9,2],[6.5,3.0,5.2,2.0,2],[6.2,3.4,5.4,2.3,2],[5.9,3.0,5.1,1.8,2]];
+const SPECIES=['setosa','versicolor','virginica'];
+const CL=[0,1,2,3,4,5,6,7,8,9].map(i=>'var(--c'+i+')');
+const $=id=>document.getElementById(id);
+const on=(id,ev,fn)=>{const e=$(id);if(e)e.addEventListener(ev,fn);};
+const fmt=(v,d=1)=>v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const tick=v=>(+v.toFixed(6)).toLocaleString('pt-BR',{maximumFractionDigits:3});
+function rng(seed){ let t=(seed*2654435761)>>>0; return ()=>{t+=0x6D2B79F5;let r=Math.imul(t^t>>>15,1|t);r^=r+Math.imul(r^r>>>7,61|r);return((r^r>>>14)>>>0)/4294967296}; }
+function gauss(r){ let u=0,v=0; while(u===0)u=r(); v=r(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+const d2=(a,b)=>{let s=0;for(let i=0;i<a.length;i++){const t=a[i]-b[i];s+=t*t;}return s;};
+function assign(X,C){ return X.map(x=>{let b=0,bd=Infinity;for(let j=0;j<C.length;j++){const d=d2(x,C[j]);if(d<bd){bd=d;b=j;}}return b;}); }
+function means(X,A,C){ const k=C.length,d=X[0].length; const s=Array.from({length:k},()=>new Array(d).fill(0)),n=new Array(k).fill(0);
+  X.forEach((x,i)=>{const j=A[i];n[j]++;for(let t=0;t<d;t++)s[j][t]+=x[t];}); return C.map((c,j)=>n[j]?s[j].map(v=>v/n[j]):c.slice()); }
+function inertia(X,A,C){ let J=0; for(let i=0;i<X.length;i++)J+=d2(X[i],C[A[i]]); return J; }
+function kpp(X,k,r){ const C=[X[Math.floor(r()*X.length)].slice()];
+  while(C.length<k){ const D=X.map(x=>{let m=Infinity;for(const c of C){const d=d2(x,c);if(d<m)m=d;}return m;}); const s=D.reduce((a,b)=>a+b,0);
+    let u=r()*s,i=0; for(;i<X.length-1;i++){u-=D[i];if(u<=0)break;} C.push(X[i].slice()); } return C; }
+function kmeans(X,k,seed){ const r=rng(seed); let C=kpp(X,k,r),A; for(let it=0;it<300;it++){ A=assign(X,C); const C2=means(X,A,C);
+  const same=C2.every((c,j)=>c.every((v,t)=>v===C[j][t])); C=C2; if(same)break; } return {C,A,J:inertia(X,A,C)}; }
+function bestOf(X,k,n=10){ let b=null; for(let s=1;s<=n;s++){const r=kmeans(X,k,s);if(!b||r.J<b.J)b=r;} return b; }
+function zscore(X){ const d=X[0].length,n=X.length; const mu=new Array(d).fill(0),sd=new Array(d).fill(0);
+  X.forEach(x=>{for(let t=0;t<d;t++)mu[t]+=x[t]/n;}); X.forEach(x=>{for(let t=0;t<d;t++)sd[t]+=(x[t]-mu[t])**2/n;});
+  return X.map(x=>x.map((v,t)=>(v-mu[t])/(Math.sqrt(sd[t])||1))); }
+function purity(A,Y,k){ let tot=0; for(let j=0;j<k;j++){const cnt={};let m=0;A.forEach((a,i)=>{if(a===j){cnt[Y[i]]=(cnt[Y[i]]||0)+1;if(cnt[Y[i]]>m)m=cnt[Y[i]];}});tot+=m;} return tot/A.length; }
+function silhouette(X,A,k){ const n=X.length; if(k<2) return {s:new Array(n).fill(0),mean:0};
+  const cnt=new Array(k).fill(0); A.forEach(a=>cnt[a]++); const s=new Array(n).fill(0);
+  for(let i=0;i<n;i++){ const acc=new Array(k).fill(0); for(let j=0;j<n;j++){if(j!==i)acc[A[j]]+=Math.sqrt(d2(X[i],X[j]));}
+    const a=cnt[A[i]]>1?acc[A[i]]/(cnt[A[i]]-1):0; let b=Infinity; for(let c=0;c<k;c++){if(c!==A[i]&&cnt[c]>0){const v=acc[c]/cnt[c];if(v<b)b=v;}}
+    s[i]=cnt[A[i]]>1?(b-a)/Math.max(a,b):0; }
+  return {s,mean:s.reduce((p,q)=>p+q,0)/n}; }
+function voronoi(C,rect){ return C.map((ci,i)=>{ let poly=[[rect[0],rect[1]],[rect[2],rect[1]],[rect[2],rect[3]],[rect[0],rect[3]]];
+  C.forEach((cj,j)=>{ if(j===i||!poly.length) return; const mx=(ci[0]+cj[0])/2,my=(ci[1]+cj[1])/2,nx=cj[0]-ci[0],ny=cj[1]-ci[1]; if(!nx&&!ny) return;
+    const f=p=>(p[0]-mx)*nx+(p[1]-my)*ny; const out=[];
+    for(let a=0;a<poly.length;a++){const P=poly[a],Q=poly[(a+1)%poly.length],fp=f(P),fq=f(Q); if(fp<=0)out.push(P); if((fp<0&&fq>0)||(fp>0&&fq<0)){const t=fp/(fp-fq);out.push([P[0]+t*(Q[0]-P[0]),P[1]+t*(Q[1]-P[1])]);}}
+    poly=out; }); return poly; }); }
+function niceStep(range,target=6){ const raw=range/target,p=Math.pow(10,Math.floor(Math.log10(raw))); for(const m of [1,2,2.5,5,10]){if(m*p>=raw)return m*p;} return 10*p; }
+function axes(W,H,m,B,lab,stepx){ const pw=W-m.l-m.r,ph=H-m.t-m.b; const sx=x=>m.l+(x-B.x[0])/(B.x[1]-B.x[0])*pw, sy=y=>H-m.b-(y-B.y[0])/(B.y[1]-B.y[0])*ph;
+  const stx=stepx||niceStep(B.x[1]-B.x[0],pw/90),sty=niceStep(B.y[1]-B.y[0],ph/60); let g='<g class="axis">';
+  for(let i=Math.ceil(B.x[0]/stx-1e-9);i*stx<=B.x[1]+1e-9;i++){const x=i*stx;g+='<line class="gridl" x1="'+sx(x)+'" x2="'+sx(x)+'" y1="'+m.t+'" y2="'+(H-m.b)+'"/><text x="'+sx(x)+'" y="'+(H-m.b+16)+'" text-anchor="middle">'+tick(x)+'</text>';}
+  for(let i=Math.ceil(B.y[0]/sty-1e-9);i*sty<=B.y[1]+1e-9;i++){const y=i*sty;g+='<line class="gridl" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+sy(y)+'" y2="'+sy(y)+'"/><text x="'+(m.l-8)+'" y="'+(sy(y)+4)+'" text-anchor="end">'+tick(y)+'</text>';}
+  g+='<text x="'+(m.l+pw/2)+'" y="'+(H-6)+'" text-anchor="middle" style="font-size:13px;fill:var(--ink)">'+lab[0]+'</text>';
+  g+='<text transform="translate(14,'+(m.t+ph/2)+') rotate(-90)" text-anchor="middle" style="font-size:13px;fill:var(--ink)">'+lab[1]+'</text></g>';
+  return {sx,sy,g}; }
+function mark(shape,cx,cy,r,attrs){ if(shape===1) return '<rect x="'+(cx-r*.9)+'" y="'+(cy-r*.9)+'" width="'+r*1.8+'" height="'+r*1.8+'" '+attrs+'/>';
+  if(shape===2) return '<path d="M'+cx+' '+(cy-r*1.25)+'L'+(cx+r*1.15)+' '+(cy+r*.75)+'L'+(cx-r*1.15)+' '+(cy+r*.75)+'Z" '+attrs+'/>';
+  return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" '+attrs+'/>'; }
+function diamond(cx,cy,R,fill){ return '<path d="M'+cx+' '+(cy-R)+'L'+(cx+R)+' '+cy+'L'+cx+' '+(cy+R)+'L'+(cx-R)+' '+cy+'Z" fill="'+fill+'" stroke="var(--ink)" stroke-width="1.6"/>'; }
+function polyStr(poly,sx,sy){ return poly.map(p=>sx(p[0])+','+sy(p[1])).join(' '); }
+const SHAPELEG='<span class="leg"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="var(--ink-2)"/></svg>setosa</span><span class="leg"><svg viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" fill="var(--ink-2)"/></svg>versicolor</span><span class="leg"><svg viewBox="0 0 16 16"><path d="M8 1L15 13.5H1Z" fill="var(--ink-2)"/></svg>virginica</span>';
+function lineChart(id,pts,o){ const W=320,H=170,m={l:46,r:12,t:12,b:36}; const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+  const B={x:[Math.min(...xs)-.5,Math.max(...xs)+.5],y:[o.y0!==undefined?o.y0:0,Math.max(...ys)*1.08||1]}; const {sx,sy,g}=axes(W,H,m,B,[o.xlab,o.ylab],1); let s=g;
+  s+='<polyline points="'+pts.map(p=>sx(p[0])+','+sy(p[1])).join(' ')+'" fill="none" stroke="var(--you)" stroke-width="2"/>';
+  pts.forEach(p=>{s+='<circle cx="'+sx(p[0])+'" cy="'+sy(p[1])+'" r="'+(p[0]===o.cur?6:3.5)+'" fill="'+(p[0]===o.cur?'var(--best)':'var(--you)')+'" '+(p[0]===o.cur?'stroke="var(--ink)" stroke-width="1.5"':'')+'><title>k = '+p[0]+': '+fmt(p[1],o.dec===undefined?1:o.dec)+'</title></circle>';});
+  $(id).innerHTML=s; }
+
+
+const PAIRS={
+  petal:{idx:[2,3],plot:[0,1],lab:['comprimento da pétala (cm)','largura da pétala (cm)'],B:{x:[0.8,7.2],y:[0,2.7]},note:'As duas medidas da pétala. As espécies se separam bem nelas.'},
+  sepal:{idx:[0,1],plot:[0,1],lab:['comprimento da sépala (cm)','largura da sépala (cm)'],B:{x:[4,8.2],y:[1.8,4.6]},note:'As duas medidas da sépala. Duas das espécies se misturam nelas.'},
+  mix:{idx:[0,2],plot:[0,1],lab:['comprimento da sépala (cm)','comprimento da pétala (cm)'],B:{x:[4,8.2],y:[0.8,7.2]},note:'Um comprimento de cada parte da flor.'},
+  all:{idx:[0,1,2,3],plot:[2,3],lab:['comprimento da pétala (cm)','largura da pétala (cm)'],B:{x:[0.8,7.2],y:[0,2.7]},note:'O algoritmo usa as 4 medidas (distância em 4 dimensões); o gráfico mostra só a pétala, por isso as regiões ficam escondidas.'}};
+const Y=IRIS.map(p=>p[4]); const W=640,H=420,M={l:52,r:16,t:16,b:44};
+const S={pair:'petal',k:3,species:false,regions:true}; let X,P,R,SIL;
+function prepare(){ P=PAIRS[S.pair]; X=IRIS.map(p=>P.idx.map(i=>p[i])); R={}; SIL={}; for(let k=1;k<=10;k++){R[k]=bestOf(X,k,10); SIL[k]=k>=2?silhouette(X,R[k].A,k):null;} $('pairnote').textContent=P.note; }
+
+function drawScatter(){ const {sx,sy,g}=axes(W,H,M,P.B,P.lab); const r=R[S.k]; const px=P.plot[0],py=P.plot[1];
+  let s='<defs><clipPath id="cp"><rect x="'+M.l+'" y="'+M.t+'" width="'+(W-M.l-M.r)+'" height="'+(H-M.t-M.b)+'"/></clipPath></defs>'+g+'<g clip-path="url(#cp)">';
+  if(S.regions&&P.idx.length===2){ voronoi(r.C,[P.B.x[0],P.B.y[0],P.B.x[1],P.B.y[1]]).forEach((poly,j)=>{ if(poly.length) s+='<polygon points="'+polyStr(poly,sx,sy)+'" fill="'+CL[j]+'" opacity=".13"/>'; }); }
+  X.forEach((x,i)=>{ s+=mark(S.species?Y[i]:0,sx(x[px]),sy(x[py]),5.5,'fill="'+CL[r.A[i]]+'" stroke="var(--panel)" stroke-width="1.2"'); });
+  r.C.forEach((c,j)=>{ s+=diamond(sx(c[px]),sy(c[py]),9,CL[j]); });
+  s+='</g>'; $('sc').innerHTML=s; }
+
+function drawSil(){ const W2=640,H2=220,m={l:52,r:16,t:10,b:30}; const sil=SIL[S.k];
+  if(!sil){ $('sil').innerHTML='<text x="320" y="110" text-anchor="middle" style="fill:var(--ink-2);font-size:12px">com k = 1 não há grupo vizinho para comparar</text>'; return; }
+  const r=R[S.k]; const order=X.map((_,i)=>i).sort((a,b)=>r.A[a]-r.A[b]||sil.s[b]-sil.s[a]); const n=X.length, gap=4, ph=H2-m.t-m.b-gap*(S.k-1), bh=ph/n;
+  const x0=m.l+(W2-m.l-m.r)*0.2, pw=(W2-m.l-m.r)*0.8; const sx=v=>x0+v*pw; let s='<g class="axis">';
+  [-0.2,0,0.2,0.4,0.6,0.8,1].forEach(v=>{s+='<line class="gridl" x1="'+sx(v)+'" x2="'+sx(v)+'" y1="'+m.t+'" y2="'+(H2-m.b)+'"/><text x="'+sx(v)+'" y="'+(H2-m.b+14)+'" text-anchor="middle">'+tick(v)+'</text>';});
+  s+='<line x1="'+sx(0)+'" x2="'+sx(0)+'" y1="'+m.t+'" y2="'+(H2-m.b)+'" stroke="var(--ink-2)"/></g>';
+  let y=m.t, prev=-1; order.forEach(i=>{ if(r.A[i]!==prev){ if(prev>=0) y+=gap; prev=r.A[i]; } const v=sil.s[i]; s+='<rect x="'+sx(Math.min(0,v))+'" y="'+y+'" width="'+Math.abs(sx(v)-sx(0))+'" height="'+Math.max(bh,0.6)+'" fill="'+CL[r.A[i]]+'"/>'; y+=bh; });
+  s+='<line x1="'+sx(sil.mean)+'" x2="'+sx(sil.mean)+'" y1="'+m.t+'" y2="'+(H2-m.b)+'" stroke="var(--err)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+  $('sil').innerHTML=s; }
+
+function drawTable(){ if(!S.species){ $('ctab').innerHTML=''; return; } const r=R[S.k]; let t='<table class="ct"><tr><th>grupo</th>'+SPECIES.map(n=>'<th>'+n+'</th>').join('')+'</tr>';
+  for(let j=0;j<S.k;j++){ const c=[0,0,0]; r.A.forEach((a,i)=>{if(a===j)c[Y[i]]++;}); t+='<tr><td><span class="dot" style="background:'+CL[j]+'"></span>'+(j+1)+'</td>'+c.map(v=>'<td>'+v+'</td>').join('')+'</tr>'; }
+  t+='</table><p class="note">Linhas: grupos do k-means. Colunas: espécie verdadeira. Pureza: '+fmt(100*purity(r.A,Y,S.k),0)+'% dos pontos estão no grupo em que sua espécie é maioria.</p>'; $('ctab').innerHTML=t; }
+
+function render(){ drawScatter(); drawSil(); drawTable(); const r=R[S.k]; $('kv').textContent=S.k; $('J').textContent=fmt(r.J,2); $('sil-m').textContent=SIL[S.k]?fmt(SIL[S.k].mean,3):'—';
+  lineChart('elbow',Object.keys(R).map(k=>[+k,R[k].J]),{xlab:'k',ylab:'inércia J',cur:S.k,dec:1});
+  lineChart('silk',Object.keys(SIL).filter(k=>SIL[k]).map(k=>[+k,SIL[k].mean]),{xlab:'k',ylab:'silhueta média',cur:S.k,dec:3});
+  $('shapeleg').hidden=!S.species; $('shapeleg').innerHTML=S.species?SHAPELEG:''; $('reveal').textContent=S.species?'Esconder as espécies':'Revelar as espécies'; }
+
+on('chips','click',e=>{const c=e.target.closest('.chip');if(!c)return;S.pair=c.dataset.pair;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===c));prepare();render();});
+on('k','input',e=>{S.k=+e.target.value;render();});
+on('reveal','click',()=>{S.species=!S.species;render();});
+on('regions','change',e=>{S.regions=e.target.checked;drawScatter();});
+prepare(); render();
+
+</script>
+</body>
+</html>

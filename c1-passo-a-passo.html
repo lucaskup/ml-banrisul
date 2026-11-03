@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agrupamento 1. K-means passo a passo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f4f1;--panel:#ffffff;--ink:#17202b;--ink-2:#55616e;--line:#d6dad4;--grid:#e9ebe6;
+  --m:#2f6fde;--f:#e0559e;--n:#9aa3ad;--you:#0e7c7b;--best:#d98c1f;--err:#c6303e;
+  --c0:#2f6fde;--c1:#e0559e;--c2:#d98c1f;--c3:#0e7c7b;--c4:#7b4fd6;--c5:#5f9e2f;--c6:#c6303e;--c7:#8a6d3b;--c8:#1f8fb8;--c9:#b0437d;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#141a21;--panel:#1d252e;--ink:#eef1f4;--ink-2:#a9b4bf;--line:#34404c;--grid:#283239;
+  --m:#6d9bf2;--f:#f07bb8;--n:#6f7a86;--you:#3fd0c5;--best:#f0b04a;--err:#ff6b78;
+  --c0:#6d9bf2;--c1:#f07bb8;--c2:#f0b04a;--c3:#3fd0c5;--c4:#a98bf0;--c5:#8ac65a;--c6:#ff6b78;--c7:#c9a26e;--c8:#5fc0e8;--c9:#e07ab3}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#141a21;--panel:#1d252e;--ink:#eef1f4;--ink-2:#a9b4bf;--line:#34404c;--grid:#283239;
+  --m:#6d9bf2;--f:#f07bb8;--n:#6f7a86;--you:#3fd0c5;--best:#f0b04a;--err:#ff6b78;
+  --c0:#6d9bf2;--c1:#f07bb8;--c2:#f0b04a;--c3:#3fd0c5;--c4:#a98bf0;--c5:#8ac65a;--c6:#ff6b78;--c7:#c9a26e;--c8:#5fc0e8;--c9:#e07ab3}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+header h1{font-size:1.9rem;font-weight:700;margin:0 0 4px;letter-spacing:-.01em}
+header p{margin:0;color:var(--ink-2);max-width:70ch}
+.eq{font-size:1.35rem;font-weight:500;margin:14px 0 6px}
+.eq b{font-weight:700;color:var(--you)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:.92rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--you);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;margin-top:12px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.panel h2{font-size:1rem;font-weight:700;margin:0 0 8px}
+svg{display:block;width:100%;height:auto}
+.axis text{fill:var(--ink-2);font-size:11px}
+.axis line,.axis path{stroke:var(--line)}
+.gridl{stroke:var(--grid)}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px 10px;margin:8px 0}
+.ctl label{font-weight:500}
+.ctl input[type=range]{width:100%;accent-color:var(--you)}
+.ctl output{min-width:3.2em;text-align:right;font-weight:700}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.met{border-top:3px solid var(--you);padding:6px 0 0}
+.met.test{border-top-color:var(--n)}
+.met h3{font-size:.85rem;font-weight:500;color:var(--ink-2);margin:0 0 2px}
+.met .big{font-size:1.6rem;font-weight:700;line-height:1.1}
+.met .sm{font-size:.85rem;color:var(--ink-2)}
+.row{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:8px 0;font-size:.95rem}
+.row label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.btn{font:inherit;font-size:.92rem;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--you);border-color:var(--you);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.note{color:var(--ink-2);font-size:.9rem;margin:8px 0 0}
+.note a{color:inherit}
+.dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;margin-right:.3em;vertical-align:middle}
+.warn{color:var(--err);font-weight:500}
+.best{color:var(--best);font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.task{background:var(--panel);border-left:4px solid var(--you);border-radius:0 10px 10px 0;padding:10px 14px;margin:14px 0 4px;max-width:78ch}
+.task p{margin:0}.task p+p{margin-top:6px;color:var(--ink-2)}
+.steps{color:var(--ink-2);font-size:.9rem;margin-bottom:6px}
+.ct{border-collapse:collapse;font-size:.9rem;margin-top:8px}
+.ct th,.ct td{border:1px solid var(--line);padding:4px 10px;text-align:right}
+.ct th{font-weight:500;color:var(--ink-2)}
+.ct td:first-child,.ct th:first-child{text-align:left}
+.leg svg{display:inline-block;width:1em;height:1em;vertical-align:-.15em;margin-right:.3em}
+#shapeleg:not([hidden]){display:inline-flex;flex-wrap:wrap;gap:8px 16px}
+#sc{cursor:crosshair}
+.nav{margin-top:22px;display:flex;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="steps">Agrupamento · prática 1 de 3</div>
+  <h1>K-means passo a passo</h1>
+  <p>150 flores de íris, só o comprimento e a largura da pétala, em centímetros. Não há rótulo: o algoritmo vê apenas os pontos. Ele repete dois passos. <b>Atribuir</b>: cada ponto vai para o centróide mais próximo. <b>Mover</b>: cada centróide vai para a média dos seus pontos.</p>
+</header>
+<div class="task"><p>Escolha k, clique no gráfico para colocar os centróides e alterne <b>atribuir</b> e <b>mover</b> até nada mudar. Acompanhe a inércia a cada passo.</p><p>Depois reinicie e coloque os centróides em lugares ruins (os três no mesmo canto, por exemplo). O algoritmo chega ao mesmo agrupamento? A inércia final é a mesma?</p></div>
+
+<div class="grid">
+  <div class="panel">
+    <svg id="sc" viewBox="0 0 640 420" role="img" aria-label="Dispersão das pétalas com centróides e grupos"></svg>
+    <div class="row" id="legend">
+      <span><span class="dot" style="background:var(--n)"></span>sem grupo</span>
+      <span><svg viewBox="0 0 16 16" style="display:inline-block;width:1em;height:1em;vertical-align:-.15em;margin-right:.3em"><path d="M8 1L15 8L8 15L1 8Z" fill="var(--you)" stroke="var(--ink)" stroke-width="1.5"/></svg>centróide</span>
+      <span id="shapeleg" hidden></span>
+    </div>
+    <div class="row">
+      <label><input type="checkbox" id="regions" checked> mostrar regiões de cada centróide</label>
+      <label><input type="checkbox" id="links"> ligar ponto ao centróide</label>
+      <label><input type="checkbox" id="species"> mostrar espécies (formas)</label>
+    </div>
+    <p class="note">Pontos repetidos ficam sobrepostos: há várias flores com medidas iguais.</p>
+  </div>
+  <div class="panel">
+    <h2>Centróides</h2>
+    <div class="ctl">
+      <label for="k">k</label><input type="range" id="k" min="2" max="6" step="1" value="3"><output id="kv">3</output>
+    </div>
+    <div class="row">
+      <button class="btn" id="draw">Sortear centróides</button>
+      <button class="btn" id="reset">Reiniciar</button>
+    </div>
+    <p class="note" id="msg"></p>
+    <h2 style="margin-top:14px">Passos</h2>
+    <div class="row">
+      <button class="btn primary" id="assign">1. Atribuir pontos</button>
+      <button class="btn" id="move">2. Mover centróides</button>
+      <button class="btn" id="run">Rodar até convergir</button>
+    </div>
+    <div class="metrics">
+      <div class="met"><h3>Inércia J</h3><div class="big" id="J">—</div><div class="sm">soma das distâncias² de cada ponto ao seu centróide</div></div>
+      <div class="met test"><h3>Iteração</h3><div class="big" id="it">0</div><div class="sm" id="itsm">um par atribuir + mover</div></div>
+    </div>
+    <h2 style="margin-top:18px">Inércia a cada passo</h2>
+    <svg id="hist" viewBox="0 0 320 170" role="img" aria-label="Inércia após cada passo"></svg>
+    <p class="note">A = atribuir, M = mover. Nenhum dos dois passos pode aumentar J, por isso o algoritmo sempre para. Mas ele para no primeiro vale que encontra.</p>
+  </div>
+</div>
+<p class="nav note"><a href="index.html">← Todas as práticas</a><a href="c2-escolher-k.html">Próxima: Escolher k →</a></p>
+
+</div>
+<script>
+
+const IRIS=[[5.1,3.5,1.4,0.2,0],[4.9,3.0,1.4,0.2,0],[4.7,3.2,1.3,0.2,0],[4.6,3.1,1.5,0.2,0],[5.0,3.6,1.4,0.2,0],[5.4,3.9,1.7,0.4,0],[4.6,3.4,1.4,0.3,0],[5.0,3.4,1.5,0.2,0],[4.4,2.9,1.4,0.2,0],[4.9,3.1,1.5,0.1,0],[5.4,3.7,1.5,0.2,0],[4.8,3.4,1.6,0.2,0],[4.8,3.0,1.4,0.1,0],[4.3,3.0,1.1,0.1,0],[5.8,4.0,1.2,0.2,0],[5.7,4.4,1.5,0.4,0],[5.4,3.9,1.3,0.4,0],[5.1,3.5,1.4,0.3,0],[5.7,3.8,1.7,0.3,0],[5.1,3.8,1.5,0.3,0],[5.4,3.4,1.7,0.2,0],[5.1,3.7,1.5,0.4,0],[4.6,3.6,1.0,0.2,0],[5.1,3.3,1.7,0.5,0],[4.8,3.4,1.9,0.2,0],[5.0,3.0,1.6,0.2,0],[5.0,3.4,1.6,0.4,0],[5.2,3.5,1.5,0.2,0],[5.2,3.4,1.4,0.2,0],[4.7,3.2,1.6,0.2,0],[4.8,3.1,1.6,0.2,0],[5.4,3.4,1.5,0.4,0],[5.2,4.1,1.5,0.1,0],[5.5,4.2,1.4,0.2,0],[4.9,3.1,1.5,0.2,0],[5.0,3.2,1.2,0.2,0],[5.5,3.5,1.3,0.2,0],[4.9,3.6,1.4,0.1,0],[4.4,3.0,1.3,0.2,0],[5.1,3.4,1.5,0.2,0],[5.0,3.5,1.3,0.3,0],[4.5,2.3,1.3,0.3,0],[4.4,3.2,1.3,0.2,0],[5.0,3.5,1.6,0.6,0],[5.1,3.8,1.9,0.4,0],[4.8,3.0,1.4,0.3,0],[5.1,3.8,1.6,0.2,0],[4.6,3.2,1.4,0.2,0],[5.3,3.7,1.5,0.2,0],[5.0,3.3,1.4,0.2,0],[7.0,3.2,4.7,1.4,1],[6.4,3.2,4.5,1.5,1],[6.9,3.1,4.9,1.5,1],[5.5,2.3,4.0,1.3,1],[6.5,2.8,4.6,1.5,1],[5.7,2.8,4.5,1.3,1],[6.3,3.3,4.7,1.6,1],[4.9,2.4,3.3,1.0,1],[6.6,2.9,4.6,1.3,1],[5.2,2.7,3.9,1.4,1],[5.0,2.0,3.5,1.0,1],[5.9,3.0,4.2,1.5,1],[6.0,2.2,4.0,1.0,1],[6.1,2.9,4.7,1.4,1],[5.6,2.9,3.6,1.3,1],[6.7,3.1,4.4,1.4,1],[5.6,3.0,4.5,1.5,1],[5.8,2.7,4.1,1.0,1],[6.2,2.2,4.5,1.5,1],[5.6,2.5,3.9,1.1,1],[5.9,3.2,4.8,1.8,1],[6.1,2.8,4.0,1.3,1],[6.3,2.5,4.9,1.5,1],[6.1,2.8,4.7,1.2,1],[6.4,2.9,4.3,1.3,1],[6.6,3.0,4.4,1.4,1],[6.8,2.8,4.8,1.4,1],[6.7,3.0,5.0,1.7,1],[6.0,2.9,4.5,1.5,1],[5.7,2.6,3.5,1.0,1],[5.5,2.4,3.8,1.1,1],[5.5,2.4,3.7,1.0,1],[5.8,2.7,3.9,1.2,1],[6.0,2.7,5.1,1.6,1],[5.4,3.0,4.5,1.5,1],[6.0,3.4,4.5,1.6,1],[6.7,3.1,4.7,1.5,1],[6.3,2.3,4.4,1.3,1],[5.6,3.0,4.1,1.3,1],[5.5,2.5,4.0,1.3,1],[5.5,2.6,4.4,1.2,1],[6.1,3.0,4.6,1.4,1],[5.8,2.6,4.0,1.2,1],[5.0,2.3,3.3,1.0,1],[5.6,2.7,4.2,1.3,1],[5.7,3.0,4.2,1.2,1],[5.7,2.9,4.2,1.3,1],[6.2,2.9,4.3,1.3,1],[5.1,2.5,3.0,1.1,1],[5.7,2.8,4.1,1.3,1],[6.3,3.3,6.0,2.5,2],[5.8,2.7,5.1,1.9,2],[7.1,3.0,5.9,2.1,2],[6.3,2.9,5.6,1.8,2],[6.5,3.0,5.8,2.2,2],[7.6,3.0,6.6,2.1,2],[4.9,2.5,4.5,1.7,2],[7.3,2.9,6.3,1.8,2],[6.7,2.5,5.8,1.8,2],[7.2,3.6,6.1,2.5,2],[6.5,3.2,5.1,2.0,2],[6.4,2.7,5.3,1.9,2],[6.8,3.0,5.5,2.1,2],[5.7,2.5,5.0,2.0,2],[5.8,2.8,5.1,2.4,2],[6.4,3.2,5.3,2.3,2],[6.5,3.0,5.5,1.8,2],[7.7,3.8,6.7,2.2,2],[7.7,2.6,6.9,2.3,2],[6.0,2.2,5.0,1.5,2],[6.9,3.2,5.7,2.3,2],[5.6,2.8,4.9,2.0,2],[7.7,2.8,6.7,2.0,2],[6.3,2.7,4.9,1.8,2],[6.7,3.3,5.7,2.1,2],[7.2,3.2,6.0,1.8,2],[6.2,2.8,4.8,1.8,2],[6.1,3.0,4.9,1.8,2],[6.4,2.8,5.6,2.1,2],[7.2,3.0,5.8,1.6,2],[7.4,2.8,6.1,1.9,2],[7.9,3.8,6.4,2.0,2],[6.4,2.8,5.6,2.2,2],[6.3,2.8,5.1,1.5,2],[6.1,2.6,5.6,1.4,2],[7.7,3.0,6.1,2.3,2],[6.3,3.4,5.6,2.4,2],[6.4,3.1,5.5,1.8,2],[6.0,3.0,4.8,1.8,2],[6.9,3.1,5.4,2.1,2],[6.7,3.1,5.6,2.4,2],[6.9,3.1,5.1,2.3,2],[5.8,2.7,5.1,1.9,2],[6.8,3.2,5.9,2.3,2],[6.7,3.3,5.7,2.5,2],[6.7,3.0,5.2,2.3,2],[6.3,2.5,5.0,1.9,2],[6.5,3.0,5.2,2.0,2],[6.2,3.4,5.4,2.3,2],[5.9,3.0,5.1,1.8,2]];
+const SPECIES=['setosa','versicolor','virginica'];
+const CL=[0,1,2,3,4,5,6,7,8,9].map(i=>'var(--c'+i+')');
+const $=id=>document.getElementById(id);
+const on=(id,ev,fn)=>{const e=$(id);if(e)e.addEventListener(ev,fn);};
+const fmt=(v,d=1)=>v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const tick=v=>(+v.toFixed(6)).toLocaleString('pt-BR',{maximumFractionDigits:3});
+function rng(seed){ let t=(seed*2654435761)>>>0; return ()=>{t+=0x6D2B79F5;let r=Math.imul(t^t>>>15,1|t);r^=r+Math.imul(r^r>>>7,61|r);return((r^r>>>14)>>>0)/4294967296}; }
+function gauss(r){ let u=0,v=0; while(u===0)u=r(); v=r(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+const d2=(a,b)=>{let s=0;for(let i=0;i<a.length;i++){const t=a[i]-b[i];s+=t*t;}return s;};
+function assign(X,C){ return X.map(x=>{let b=0,bd=Infinity;for(let j=0;j<C.length;j++){const d=d2(x,C[j]);if(d<bd){bd=d;b=j;}}return b;}); }
+function means(X,A,C){ const k=C.length,d=X[0].length; const s=Array.from({length:k},()=>new Array(d).fill(0)),n=new Array(k).fill(0);
+  X.forEach((x,i)=>{const j=A[i];n[j]++;for(let t=0;t<d;t++)s[j][t]+=x[t];}); return C.map((c,j)=>n[j]?s[j].map(v=>v/n[j]):c.slice()); }
+function inertia(X,A,C){ let J=0; for(let i=0;i<X.length;i++)J+=d2(X[i],C[A[i]]); return J; }
+function kpp(X,k,r){ const C=[X[Math.floor(r()*X.length)].slice()];
+  while(C.length<k){ const D=X.map(x=>{let m=Infinity;for(const c of C){const d=d2(x,c);if(d<m)m=d;}return m;}); const s=D.reduce((a,b)=>a+b,0);
+    let u=r()*s,i=0; for(;i<X.length-1;i++){u-=D[i];if(u<=0)break;} C.push(X[i].slice()); } return C; }
+function kmeans(X,k,seed){ const r=rng(seed); let C=kpp(X,k,r),A; for(let it=0;it<300;it++){ A=assign(X,C); const C2=means(X,A,C);
+  const same=C2.every((c,j)=>c.every((v,t)=>v===C[j][t])); C=C2; if(same)break; } return {C,A,J:inertia(X,A,C)}; }
+function bestOf(X,k,n=10){ let b=null; for(let s=1;s<=n;s++){const r=kmeans(X,k,s);if(!b||r.J<b.J)b=r;} return b; }
+function zscore(X){ const d=X[0].length,n=X.length; const mu=new Array(d).fill(0),sd=new Array(d).fill(0);
+  X.forEach(x=>{for(let t=0;t<d;t++)mu[t]+=x[t]/n;}); X.forEach(x=>{for(let t=0;t<d;t++)sd[t]+=(x[t]-mu[t])**2/n;});
+  return X.map(x=>x.map((v,t)=>(v-mu[t])/(Math.sqrt(sd[t])||1))); }
+function purity(A,Y,k){ let tot=0; for(let j=0;j<k;j++){const cnt={};let m=0;A.forEach((a,i)=>{if(a===j){cnt[Y[i]]=(cnt[Y[i]]||0)+1;if(cnt[Y[i]]>m)m=cnt[Y[i]];}});tot+=m;} return tot/A.length; }
+function silhouette(X,A,k){ const n=X.length; if(k<2) return {s:new Array(n).fill(0),mean:0};
+  const cnt=new Array(k).fill(0); A.forEach(a=>cnt[a]++); const s=new Array(n).fill(0);
+  for(let i=0;i<n;i++){ const acc=new Array(k).fill(0); for(let j=0;j<n;j++){if(j!==i)acc[A[j]]+=Math.sqrt(d2(X[i],X[j]));}
+    const a=cnt[A[i]]>1?acc[A[i]]/(cnt[A[i]]-1):0; let b=Infinity; for(let c=0;c<k;c++){if(c!==A[i]&&cnt[c]>0){const v=acc[c]/cnt[c];if(v<b)b=v;}}
+    s[i]=cnt[A[i]]>1?(b-a)/Math.max(a,b):0; }
+  return {s,mean:s.reduce((p,q)=>p+q,0)/n}; }
+function voronoi(C,rect){ return C.map((ci,i)=>{ let poly=[[rect[0],rect[1]],[rect[2],rect[1]],[rect[2],rect[3]],[rect[0],rect[3]]];
+  C.forEach((cj,j)=>{ if(j===i||!poly.length) return; const mx=(ci[0]+cj[0])/2,my=(ci[1]+cj[1])/2,nx=cj[0]-ci[0],ny=cj[1]-ci[1]; if(!nx&&!ny) return;
+    const f=p=>(p[0]-mx)*nx+(p[1]-my)*ny; const out=[];
+    for(let a=0;a<poly.length;a++){const P=poly[a],Q=poly[(a+1)%poly.length],fp=f(P),fq=f(Q); if(fp<=0)out.push(P); if((fp<0&&fq>0)||(fp>0&&fq<0)){const t=fp/(fp-fq);out.push([P[0]+t*(Q[0]-P[0]),P[1]+t*(Q[1]-P[1])]);}}
+    poly=out; }); return poly; }); }
+function niceStep(range,target=6){ const raw=range/target,p=Math.pow(10,Math.floor(Math.log10(raw))); for(const m of [1,2,2.5,5,10]){if(m*p>=raw)return m*p;} return 10*p; }
+function axes(W,H,m,B,lab,stepx){ const pw=W-m.l-m.r,ph=H-m.t-m.b; const sx=x=>m.l+(x-B.x[0])/(B.x[1]-B.x[0])*pw, sy=y=>H-m.b-(y-B.y[0])/(B.y[1]-B.y[0])*ph;
+  const stx=stepx||niceStep(B.x[1]-B.x[0],pw/90),sty=niceStep(B.y[1]-B.y[0],ph/60); let g='<g class="axis">';
+  for(let i=Math.ceil(B.x[0]/stx-1e-9);i*stx<=B.x[1]+1e-9;i++){const x=i*stx;g+='<line class="gridl" x1="'+sx(x)+'" x2="'+sx(x)+'" y1="'+m.t+'" y2="'+(H-m.b)+'"/><text x="'+sx(x)+'" y="'+(H-m.b+16)+'" text-anchor="middle">'+tick(x)+'</text>';}
+  for(let i=Math.ceil(B.y[0]/sty-1e-9);i*sty<=B.y[1]+1e-9;i++){const y=i*sty;g+='<line class="gridl" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+sy(y)+'" y2="'+sy(y)+'"/><text x="'+(m.l-8)+'" y="'+(sy(y)+4)+'" text-anchor="end">'+tick(y)+'</text>';}
+  g+='<text x="'+(m.l+pw/2)+'" y="'+(H-6)+'" text-anchor="middle" style="font-size:13px;fill:var(--ink)">'+lab[0]+'</text>';
+  g+='<text transform="translate(14,'+(m.t+ph/2)+') rotate(-90)" text-anchor="middle" style="font-size:13px;fill:var(--ink)">'+lab[1]+'</text></g>';
+  return {sx,sy,g}; }
+function mark(shape,cx,cy,r,attrs){ if(shape===1) return '<rect x="'+(cx-r*.9)+'" y="'+(cy-r*.9)+'" width="'+r*1.8+'" height="'+r*1.8+'" '+attrs+'/>';
+  if(shape===2) return '<path d="M'+cx+' '+(cy-r*1.25)+'L'+(cx+r*1.15)+' '+(cy+r*.75)+'L'+(cx-r*1.15)+' '+(cy+r*.75)+'Z" '+attrs+'/>';
+  return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" '+attrs+'/>'; }
+function diamond(cx,cy,R,fill){ return '<path d="M'+cx+' '+(cy-R)+'L'+(cx+R)+' '+cy+'L'+cx+' '+(cy+R)+'L'+(cx-R)+' '+cy+'Z" fill="'+fill+'" stroke="var(--ink)" stroke-width="1.6"/>'; }
+function polyStr(poly,sx,sy){ return poly.map(p=>sx(p[0])+','+sy(p[1])).join(' '); }
+const SHAPELEG='<span class="leg"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="var(--ink-2)"/></svg>setosa</span><span class="leg"><svg viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" fill="var(--ink-2)"/></svg>versicolor</span><span class="leg"><svg viewBox="0 0 16 16"><path d="M8 1L15 13.5H1Z" fill="var(--ink-2)"/></svg>virginica</span>';
+function lineChart(id,pts,o){ const W=320,H=170,m={l:46,r:12,t:12,b:36}; const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+  const B={x:[Math.min(...xs)-.5,Math.max(...xs)+.5],y:[o.y0!==undefined?o.y0:0,Math.max(...ys)*1.08||1]}; const {sx,sy,g}=axes(W,H,m,B,[o.xlab,o.ylab],1); let s=g;
+  s+='<polyline points="'+pts.map(p=>sx(p[0])+','+sy(p[1])).join(' ')+'" fill="none" stroke="var(--you)" stroke-width="2"/>';
+  pts.forEach(p=>{s+='<circle cx="'+sx(p[0])+'" cy="'+sy(p[1])+'" r="'+(p[0]===o.cur?6:3.5)+'" fill="'+(p[0]===o.cur?'var(--best)':'var(--you)')+'" '+(p[0]===o.cur?'stroke="var(--ink)" stroke-width="1.5"':'')+'><title>k = '+p[0]+': '+fmt(p[1],o.dec===undefined?1:o.dec)+'</title></circle>';});
+  $(id).innerHTML=s; }
+
+
+const X=IRIS.map(p=>[p[2],p[3]]), Y=IRIS.map(p=>p[4]);
+const B={x:[0.8,7.2],y:[0,2.7]}, W=640,H=420,M={l:52,r:16,t:16,b:44};
+const S={k:3,C:[],A:null,next:'assign',iter:0,changed:null,hist:[],paths:[],done:false,running:false,seed:1,regions:true,links:false,species:false};
+let runTok=0;
+
+function doAssign(){ const A=assign(X,S.C); let ch=0; if(S.A) A.forEach((a,i)=>{if(a!==S.A[i])ch++;}); else ch=X.length;
+  const first=!S.A; S.A=A; S.changed=ch; S.hist.push(['A',inertia(X,A,S.C)]); S.next='move';
+  if(!first&&ch===0){S.done=true;} }
+function doMove(){ const C2=means(X,S.A,S.C); C2.forEach((c,j)=>{S.paths[j].push(c.slice());}); S.C=C2; S.iter++; S.hist.push(['M',inertia(X,S.A,S.C)]); S.next='assign'; }
+function step(){ if(S.next==='assign') doAssign(); else doMove(); }
+function reset(){ runTok++; Object.assign(S,{C:[],A:null,next:'assign',iter:0,changed:null,hist:[],paths:[],done:false,running:false}); render(); }
+function run(){ if(S.C.length<S.k||S.done) return; S.running=true; const tok=++runTok;
+  const tickFn=()=>{ if(tok!==runTok) return; step(); if(S.done||S.iter>100){S.running=false;} render(); if(S.running) setTimeout(tickFn,420); }; tickFn(); }
+
+function drawScatter(){ const {sx,sy,g}=axes(W,H,M,B,['comprimento da pétala (cm)','largura da pétala (cm)']);
+  let s='<defs><clipPath id="cp"><rect x="'+M.l+'" y="'+M.t+'" width="'+(W-M.l-M.r)+'" height="'+(H-M.t-M.b)+'"/></clipPath></defs>'+g+'<g clip-path="url(#cp)">';
+  if(S.regions&&S.C.length){ voronoi(S.C,[B.x[0],B.y[0],B.x[1],B.y[1]]).forEach((poly,j)=>{ if(poly.length) s+='<polygon points="'+polyStr(poly,sx,sy)+'" fill="'+CL[j]+'" opacity=".13"/>'; }); }
+  if(S.links&&S.A){ X.forEach((x,i)=>{const c=S.C[S.A[i]]; s+='<line x1="'+sx(x[0])+'" y1="'+sy(x[1])+'" x2="'+sx(c[0])+'" y2="'+sy(c[1])+'" stroke="'+CL[S.A[i]]+'" stroke-width="1" opacity=".4"/>';}); }
+  S.paths.forEach((p,j)=>{ if(p.length>1){ s+='<polyline points="'+polyStr(p,sx,sy)+'" fill="none" stroke="'+CL[j]+'" stroke-width="1.5" stroke-dasharray="4 3" opacity=".7"/>'; p.slice(0,-1).forEach(q=>{s+='<circle cx="'+sx(q[0])+'" cy="'+sy(q[1])+'" r="3" fill="none" stroke="'+CL[j]+'" stroke-width="1.5" opacity=".7"/>';}); } });
+  X.forEach((x,i)=>{ const col=S.A?CL[S.A[i]]:'var(--n)'; s+=mark(S.species?Y[i]:0,sx(x[0]),sy(x[1]),5.5,'fill="'+col+'" stroke="var(--panel)" stroke-width="1.2"'); });
+  S.C.forEach((c,j)=>{ s+=diamond(sx(c[0]),sy(c[1]),9,CL[j]); });
+  s+='</g>'; $('sc').innerHTML=s; }
+
+function drawHist(){ const W2=320,H2=170,m={l:46,r:12,t:12,b:30}; if(!S.hist.length){ $('hist').innerHTML='<text x="160" y="90" text-anchor="middle" style="fill:var(--ink-2);font-size:12px">a inércia aparece após o primeiro passo</text>'; return; }
+  const n=S.hist.length, maxJ=Math.max(...S.hist.map(h=>h[1])); const pw=W2-m.l-m.r,ph=H2-m.t-m.b;
+  const sx=i=>m.l+(n>1?i/(n-1):.5)*pw, sy=v=>H2-m.b-v/maxJ*ph; let s='<g class="axis">';
+  [0,.5,1].forEach(f=>{s+='<line class="gridl" x1="'+m.l+'" x2="'+(W2-m.r)+'" y1="'+sy(f*maxJ)+'" y2="'+sy(f*maxJ)+'"/><text x="'+(m.l-6)+'" y="'+(sy(f*maxJ)+4)+'" text-anchor="end">'+fmt(f*maxJ,0)+'</text>';});
+  if(n<=18) S.hist.forEach((h,i)=>{s+='<text x="'+sx(i)+'" y="'+(H2-m.b+14)+'" text-anchor="middle">'+h[0]+'</text>';}); else s+='<text x="'+(m.l+pw/2)+'" y="'+(H2-m.b+14)+'" text-anchor="middle">'+n+' passos</text>';
+  s+='</g><polyline points="'+S.hist.map((h,i)=>sx(i)+','+sy(h[1])).join(' ')+'" fill="none" stroke="var(--you)" stroke-width="2"/>';
+  S.hist.forEach((h,i)=>{s+='<circle cx="'+sx(i)+'" cy="'+sy(h[1])+'" r="3.5" fill="var(--you)"><title>'+(h[0]==='A'?'atribuir':'mover')+': J = '+fmt(h[1],2)+'</title></circle>';});
+  $('hist').innerHTML=s; }
+
+function render(){ drawScatter(); drawHist();
+  const placing=S.C.length<S.k; $('kv').textContent=S.k; $('J').textContent=S.A?fmt(inertia(X,S.A,S.C),2):'—'; $('it').textContent=S.iter;
+  $('itsm').textContent=S.changed===null?'um par atribuir + mover':(S.changed+' ponto'+(S.changed===1?'':'s')+' trocaram de grupo na última atribuição');
+  $('assign').disabled=placing||S.running||S.done||S.next!=='assign'; $('move').disabled=placing||S.running||S.done||S.next!=='move'; $('run').disabled=placing||S.running||S.done;
+  $('assign').classList.toggle('primary',!placing&&S.next==='assign'&&!S.done); $('move').classList.toggle('primary',!placing&&S.next==='move'&&!S.done);
+  $('draw').disabled=S.running; $('k').disabled=S.running; $('shapeleg').hidden=!S.species; $('shapeleg').innerHTML=S.species?SHAPELEG:'';
+  let msg; if(placing){const f=S.k-S.C.length; msg='Clique no gráfico para colocar '+(S.C.length?'mais ':'')+f+' centróide'+(f>1?'s':'')+', ou sorteie.';}
+  else if(S.done) msg='<span class="best">Convergiu</span>: nenhum ponto trocou de grupo. '+S.iter+' iteraç'+(S.iter===1?'ão':'ões')+', J = '+fmt(inertia(X,S.A,S.C),2)+'.';
+  else if(S.running) msg='Rodando…';
+  else if(S.next==='assign'&&!S.A) msg='Centróides no lugar. Agora atribua cada ponto ao mais próximo.';
+  else if(S.next==='move') msg='Pontos atribuídos. Agora mova cada centróide para a média do seu grupo.';
+  else msg='Centróides movidos. Alguns pontos podem ter ficado mais perto de outro centróide: atribua de novo.';
+  $('msg').innerHTML=msg; }
+
+on('sc','click',e=>{ if(S.running) return; const r=e.currentTarget.getBoundingClientRect(); const px=(e.clientX-r.left)/r.width*W, py=(e.clientY-r.top)/r.height*H;
+  if(px<M.l||px>W-M.r||py<M.t||py>H-M.b) return; const x=B.x[0]+(px-M.l)/(W-M.l-M.r)*(B.x[1]-B.x[0]), y=B.y[1]-(py-M.t)/(H-M.t-M.b)*(B.y[1]-B.y[0]);
+  if(S.C.length>=S.k){ $('msg').innerHTML='Já há '+S.k+' centróides. Use <b>Reiniciar</b> para recolocá-los ou aumente k.'; return; }
+  S.C.push([x,y]); S.paths.push([[x,y]]); render(); });
+on('k','input',e=>{ S.k=+e.target.value; if(S.C.length>S.k||S.A){ reset(); } else render(); });
+on('draw','click',()=>{ runTok++; const r=rng(S.seed++); const idx=X.map((_,i)=>i).sort(()=>r()-.5).slice(0,S.k);
+  Object.assign(S,{C:idx.map(i=>X[i].slice()),A:null,next:'assign',iter:0,changed:null,hist:[],done:false,running:false}); S.paths=S.C.map(c=>[c.slice()]); render(); });
+on('reset','click',reset);
+on('assign','click',()=>{doAssign();render();});
+on('move','click',()=>{doMove();render();});
+on('run','click',run);
+on('regions','change',e=>{S.regions=e.target.checked;drawScatter();});
+on('links','change',e=>{S.links=e.target.checked;drawScatter();});
+on('species','change',e=>{S.species=e.target.checked;render();});
+render();
+
+</script>
+</body>
+</html>

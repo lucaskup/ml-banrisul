@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Regressão linear – práticas</title>
+<title>Práticas de Machine Learning</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -75,16 +75,23 @@ svg{display:block;width:100%;height:auto}
 .card .num{font-size:2rem;font-weight:700;color:var(--you);line-height:1}
 .card h2{margin:0 0 4px;font-size:1.15rem}
 .card p{margin:0;color:var(--ink-2)}
+h2.sec{font-size:1.25rem;font-weight:700;margin:28px 0 0}
+h2.sec+p{margin:4px 0 0;color:var(--ink-2)}
 </style>
 </head>
 <body>
 <div class="wrap" style="max-width:720px">
 <header>
-  <h1>Regressão linear com os dados da turma</h1>
-  <p>Altura e comprimento do antebraço de quem respondeu ao formulário. Quatro práticas curtas, uma lição por página.</p>
+  <h1>Práticas de Machine Learning</h1>
+  <p>Páginas interativas curtas, uma lição por página. Cada bloco destacado no topo da página diz o que fazer.</p>
 </header>
-<div class="cards"><a class="card" href="1-ajuste.html"><div class="num">1</div><div><h2>Ajuste na mão</h2><p>Mova a inclinação e o intercepto até a reta passar bem pelos pontos. Acompanhe o MSE.</p></div></a><a class="card" href="2-dado-errado.html"><div class="num">2</div><div><h2>Um dado errado</h2><p>Uma altura digitada em metros. Compare o que isso faz com o MSE e com o MAE.</p></div></a><a class="card" href="3-enviesado.html"><div class="num">3</div><div><h2>Treino enviesado</h2><p>Treine só com parte da turma e veja o erro em quem ficou de fora.</p></div></a><a class="card" href="4-gradiente.html"><div class="num">4</div><div><h2>Descendo o vale</h2><p>Mapa do erro, passos de gradiente, taxa de aprendizado e por que escalar x.</p></div></a></div>
-<p class="note" style="margin-top:20px">Curso de Machine Learning · Banrisul · PUCRS. Os dados estão anonimizados: só antebraço, altura, sexo, idade e um indicador de área de TI.</p>
+<h2 class="sec">Regressão linear com os dados da turma</h2>
+<p>Altura e comprimento do antebraço de quem respondeu ao formulário.</p>
+<div class="cards" style="margin-top:12px"><a class="card" href="1-ajuste.html"><div class="num">1</div><div><h2>Ajuste na mão</h2><p>Mova a inclinação e o intercepto até a reta passar bem pelos pontos. Acompanhe o MSE.</p></div></a><a class="card" href="2-dado-errado.html"><div class="num">2</div><div><h2>Um dado errado</h2><p>Uma altura digitada em metros. Compare o que isso faz com o MSE e com o MAE.</p></div></a><a class="card" href="3-enviesado.html"><div class="num">3</div><div><h2>Treino enviesado</h2><p>Treine só com parte da turma e veja o erro em quem ficou de fora.</p></div></a><a class="card" href="4-gradiente.html"><div class="num">4</div><div><h2>Descendo o vale</h2><p>Mapa do erro, passos de gradiente, taxa de aprendizado e por que escalar x.</p></div></a></div>
+<h2 class="sec">Agrupamento com k-means</h2>
+<p>As 150 flores do conjunto Iris (comprimento e largura de pétala e sépala), sem usar a espécie. Na última prática, também dados gerados.</p>
+<div class="cards" style="margin-top:12px"><a class="card" href="c1-passo-a-passo.html"><div class="num">1</div><div><h2>K-means passo a passo</h2><p>Coloque os centróides, alterne atribuir e mover e veja a inércia cair até convergir. Depois comece de um lugar ruim.</p></div></a><a class="card" href="c2-escolher-k.html"><div class="num">2</div><div><h2>Escolher k</h2><p>Curva do cotovelo e silhueta para cada k. Revele as espécies e compare com os grupos encontrados.</p></div></a><a class="card" href="c3-limitacoes.html"><div class="num">3</div><div><h2>Onde o k-means falha</h2><p>Medidas em escalas diferentes, luas, anéis e manchas desiguais: o que a distância euclidiana e a média não conseguem representar.</p></div></a></div>
+<p class="note" style="margin-top:20px">Curso de Machine Learning · Banrisul · PUCRS. Os dados da turma estão anonimizados: só antebraço, altura, sexo, idade e um indicador de área de TI. O Iris vem da base pública de Fisher (1936).</p>
 </div>
 </body>
 </html>
