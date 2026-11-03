@@ -59,6 +59,7 @@ b.addEventListener('click',()=>{const next=dark()?'light':'dark';document.docume
 document.querySelectorAll('ol.todo li').forEach((li,i)=>{const cb=li.querySelector('input');if(!cb)return;const id=li.closest('section').id+':'+i;
   if(st[id]){cb.checked=true;li.classList.add('done');}
   cb.addEventListener('change',()=>{li.classList.toggle('done',cb.checked);st[id]=cb.checked;try{localStorage.setItem(key,JSON.stringify(st))}catch(e){}});});
+const h=document.getElementById(location.hash.slice(1));if(h){const d=h.querySelector('details');if(d){d.open=true;}}
 const r=document.getElementById('reset');if(r)r.addEventListener('click',()=>{st={};try{localStorage.removeItem(key)}catch(e){}
   document.querySelectorAll('ol.todo li').forEach(li=>{const cb=li.querySelector('input');if(cb)cb.checked=false;li.classList.remove('done');});});})();
 """
@@ -77,6 +78,24 @@ HELP = """
 </ul>
 </details>"""
 
+ORANGE_VER = '3.40.0'
+ORANGE_ZIP = f'https://download.biolab.si/download/files/Orange3-{ORANGE_VER}.zip'
+INSTALL = f"""
+<section id="orange"><details class="help">
+<summary>Ainda não tem o Orange? Versão portátil, sem instalar</summary>
+<p>A versão portátil do Orange roda no Windows a partir de uma pasta comum, sem instalador e sem senha de administrador. São 500 MB para baixar e 1,4 GB depois de descompactado, em cerca de 24 mil arquivos. No macOS use o instalador <code>.dmg</code> da <a class="links" href="https://orangedatamining.com/download/">página de download</a>.</p>
+<ol class="todo">
+<li><label><input type="checkbox">Baixe o arquivo <a class="links" href="{ORANGE_ZIP}">Orange3-{ORANGE_VER}.zip</a>. É o mesmo arquivo da opção <b>Portable Orange</b>, aba Windows, em orangedatamining.com/download.</label></li>
+<li><label><input type="checkbox">Mova o zip para uma pasta local em que você possa gravar, como <code>Documentos</code> ou a Área de Trabalho. Evite pastas de rede e pastas sincronizadas com o OneDrive: a sincronização de milhares de arquivos pequenos deixa tudo lento.</label></li>
+<li><label><input type="checkbox">Clique com o botão direito no zip, escolha <b>Extrair Tudo…</b> e depois <b>Extrair</b>. A descompactação leva alguns minutos. 7-Zip ou WinRAR também servem.</label></li>
+<li><label><input type="checkbox">Abra a pasta extraída (<code>Orange3-{ORANGE_VER}</code>). Dentro há a pasta <code>Orange</code> e o atalho <b>Orange</b>. Dê duplo clique no atalho. Uma janela preta de terminal pisca e some; isso é esperado.</label></li>
+<li><label><input type="checkbox">Espere: a primeira abertura leva de um a dois minutos, porque o Windows lê todos os arquivos pela primeira vez. As seguintes são mais rápidas. Se aparecer um aviso do SmartScreen, clique em <b>Mais informações</b> e em <b>Executar assim mesmo</b>.</label></li>
+<li><label><input type="checkbox">Confira: a tela do Orange abre com a barra de widgets à esquerda (Data, Visualize, Model…). Em <b>Help → About</b> aparece a versão {ORANGE_VER}.</label></li>
+</ol>
+<p>Se o atalho não abrir nada (algumas máquinas corporativas bloqueiam o <code>cmd.exe</code> que ele usa), entre na pasta <code>Orange</code>, clique na barra de endereço do Explorador de Arquivos, digite <code>pythonw.exe -m Orange.canvas</code> e aperte <kbd>Enter</kbd>.</p>
+<p>A versão portátil não associa a extensão <code>.ows</code>: duplo clique no arquivo do workflow não abre o Orange. Use <b>File → Open</b> dentro do Orange ou arraste o arquivo para a tela.</p>
+</details></section>"""
+
 def todo(items):
     return '<ol class="todo">' + ''.join(f'<li><label><input type="checkbox">{t}</label></li>' for t in items) + '</ol>'
 def obs(*ps):
@@ -91,7 +110,7 @@ def tbl(head, rows, num_from=1):
     return f'<table><thead><tr>{h}</tr></thead><tbody>{r}</tbody></table>'
 def before(n, base, csv, extra=''):
     return f"""
-<h2 class="sec" style="border-top:0;margin-top:20px">Antes de começar<span class="min">5 min</span></h2>
+<h2 class="sec" style="border-top:0;margin-top:20px">Antes de começar<span class="min">5 min</span></h2>{INSTALL}
 <p class="links">Baixe o <a href="orange/{base}_inicio.ows" download>workflow de início</a> e abra no Orange (<b>File → Open</b>, ou arraste o arquivo para a tela). Os dados são carregados pela internet; se a rede bloquear, baixe o <a href="data/{csv}">CSV</a>, abra o widget <b class="w">File</b>, escolha a aba de arquivo local e aponte para ele.</p>
 <p>A parte da esquerda do workflow já está ligada (carga e exploração). Os widgets da direita estão soltos: ligar e configurar cada um deles é o trabalho desta prática. Se travar em algum ponto, o <a class="links" href="orange/{base}_completo.ows" download>workflow completo</a> tem tudo ligado.</p>{extra}
 {HELP}"""

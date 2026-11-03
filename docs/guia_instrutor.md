@@ -20,7 +20,7 @@ Materiais, todos no repositório do curso ([lucaskup.github.io/ml-banrisul](http
 
 - `data/insurance.csv`, `data/german_credit.csv`, `data/cartao.csv`: os três datasets, já com nomes de colunas em português.
 - `orange/p1_regressao_inicio.ows`, `orange/p2_classificacao_inicio.ows`, `orange/p3_agrupamento_inicio.ows`: workflows de partida, com os widgets de carga e exploração já conectados e os de modelagem por conectar. Os `*_completo.ows` são o gabarito com tudo ligado.
-- Orange 3.38 ou mais novo instalado em cada máquina (instalador em orangedatamining.com; peça à TI do Banrisul com uma semana de antecedência, porque o instalador tem \~500 MB e o primeiro boot demora).
+- Orange 3.38 ou mais novo em cada máquina. Há dois caminhos: o instalador (orangedatamining.com; peça à TI do Banrisul com uma semana de antecedência, porque tem \~500 MB e o primeiro boot demora) ou a versão portátil para Windows, que dispensa instalação e senha de administrador (zip de 500 MB, 1,4 GB descompactado). O passo a passo da versão portátil está na seção "Antes de começar" dos três roteiros (`p1-regressao.html#orange`). Na portátil, o duplo clique em `.ows` não abre o Orange: use File → Open ou arraste o arquivo para a tela.
 
 O widget File do Orange aceita URL, então os workflows apontam direto para os CSV no GitHub Pages. Se a rede do banco bloquear github.io, distribua a pasta `data/` por pendrive e troque a URL pelo arquivo local no widget File (um clique).
 
