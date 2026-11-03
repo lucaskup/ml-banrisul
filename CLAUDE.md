@@ -16,6 +16,7 @@ c1-passo-a-passo.html … c3-limitacoes.html   práticas de k-means (editadas à
 data/insurance.csv              1.338 segurados; cabeçalho com prefixos de papel do Orange (cC# = alvo)
 data/german_credit.csv          1.000 solicitantes de crédito; alvo risco (bom/mau)
 data/cartao.csv                 8.950 clientes de cartão; cliente como meta (mS#)
+p1-regressao.html, p2-classificacao.html, p3-agrupamento.html   roteiros auto-guiados das práticas Orange (gerados por tools/gen_praticas.py)
 orange/p{1,2,3}_*_inicio.ows    workflows de partida (exploração ligada, modelagem por ligar)
 orange/p{1,2,3}_*_completo.ows  gabarito com tudo ligado
 qr/*.svg                        QR codes para os slides (índice e uma por página interativa)
@@ -23,6 +24,7 @@ tools/
   gen.py + base.css + pts.json  regenera as quatro páginas do antebraço (pts.json = respostas anonimizadas)
   prep_data.py + *_pt.csv       regenera data/*.csv a partir dos CSV em português
   ows.py + reg.json             regenera os seis .ows (reg.json = nomes de widgets/canais do Orange 3.40)
+  gen_praticas.py               regenera os três roteiros das práticas Orange (números das caixas "Confira" = guia)
   qr.py                         regenera qr/*.svg (pip install segno)
   orng.py                       helpers usados para calcular os números do guia (API do Orange)
 docs/guia_instrutor.md          guia de condução das três práticas, com números esperados
@@ -42,7 +44,16 @@ Todos os geradores rodam a partir de qualquer diretório (`python tools/gen.py`)
   antebraço, altura e indicador TI). Não adicionar colunas.
 - Se a URL base mudar, editar `BASE` em `tools/ows.py` e em `tools/qr.py` e regenerar; o Orange
   guarda a URL no `.ows`.
-- As páginas `1-…4-*.html` são saída de `tools/gen.py`: editar o gerador, não o HTML, para a
-  mudança não se perder na próxima regeneração.
+- As páginas `1-…4-*.html` são saída de `tools/gen.py` e `p1-…p3-*.html` de `tools/gen_praticas.py`:
+  editar o gerador, não o HTML, para a mudança não se perder na próxima regeneração.
 - Depois de um push, `gh api repos/lucaskup/ml-banrisul/pages --jq '.status'` deve devolver `built`.
 - Texto para o usuário em português; código e nomes de arquivo como estão.
+
+## Prosa
+
+Valem as regras de prosa do curso de deep learning (`~/Projects/courses/deep-learning-course/AGENTS.md`,
+seção "Prose style for course content"): sem `-`/`---` como parêntese; afirmação antes da negação;
+sem adjetivo que só sinaliza importância ou grau ("lição central", "pergunta boa"); sem rótulo de
+resumo ("A lição", "Resumindo"); sujeito primeiro, sem frase invertida; e cada página é autocontida,
+sem apontar para outra parte do material por posição ("na etapa 3", "na próxima prática", "como vimos").
+Nomear o conceito em vez da posição ("depois da normalização", "quando o k-Means entrar").

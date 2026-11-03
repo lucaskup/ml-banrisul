@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orange 3. Agrupamento: quem são os clientes de cartão?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f4f1;--panel:#ffffff;--ink:#17202b;--ink-2:#55616e;--line:#d6dad4;--grid:#e9ebe6;
+  --m:#2f6fde;--f:#e0559e;--n:#9aa3ad;--you:#0e7c7b;--best:#d98c1f;--err:#c6303e;
+  --heat0:#f8f1d8;--heat1:#1b1f3a;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#141a21;--panel:#1d252e;--ink:#eef1f4;--ink-2:#a9b4bf;--line:#34404c;--grid:#283239;
+  --m:#6d9bf2;--f:#f07bb8;--n:#6f7a86;--you:#3fd0c5;--best:#f0b04a;--err:#ff6b78;--heat0:#2a2f27;--heat1:#f4e6a8}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#141a21;--panel:#1d252e;--ink:#eef1f4;--ink-2:#a9b4bf;--line:#34404c;--grid:#283239;
+  --m:#6d9bf2;--f:#f07bb8;--n:#6f7a86;--you:#3fd0c5;--best:#f0b04a;--err:#ff6b78;--heat0:#2a2f27;--heat1:#f4e6a8}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+header h1{font-size:1.9rem;font-weight:700;margin:0 0 4px;letter-spacing:-.01em}
+header p{margin:0;color:var(--ink-2);max-width:70ch}
+.eq{font-size:1.35rem;font-weight:500;margin:14px 0 6px}
+.eq b{font-weight:700;color:var(--you)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:.92rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--you);outline-offset:2px}
+.seed{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-size:.92rem}
+.seed input{width:64px;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;margin-top:12px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.panel h2{font-size:1rem;font-weight:700;margin:0 0 8px}
+svg{display:block;width:100%;height:auto}
+.axis text{fill:var(--ink-2);font-size:11px}
+.axis line,.axis path{stroke:var(--line)}
+.gridl{stroke:var(--grid)}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px 10px;margin:8px 0}
+.ctl label{font-weight:500}
+.ctl input[type=range]{width:100%;accent-color:var(--you)}
+.ctl input[type=number]{width:84px;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.met{border-top:3px solid var(--you);padding:6px 0 0}
+.met.test{border-top-color:var(--n)}
+.met h3{font-size:.85rem;font-weight:500;color:var(--ink-2);margin:0 0 2px}
+.met .big{font-size:1.6rem;font-weight:700;line-height:1.1}
+.met .sm{font-size:.85rem;color:var(--ink-2)}
+.row{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:8px 0;font-size:.95rem}
+.row label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.btn{font:inherit;font-size:.92rem;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--you);border-color:var(--you);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.note{color:var(--ink-2);font-size:.9rem;margin:8px 0 0}
+.note a{color:inherit}
+.dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;margin-right:.3em;vertical-align:middle}
+.hollow{display:inline-block;width:.6em;height:.6em;border-radius:50%;border:2px solid var(--ink-2);margin-right:.3em;vertical-align:middle}
+.heatwrap{position:relative;margin-top:6px}
+.heatwrap canvas{width:100%;height:auto;display:block;border-radius:6px;cursor:crosshair}
+.heatwrap svg{position:absolute;inset:0;pointer-events:none}
+.warn{color:var(--err);font-weight:500}
+.best{color:var(--best);font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:no-preference){.trail circle{transition:none}}
+
+.wrap{position:relative;max-width:900px}
+header{padding-right:56px}
+.steps{color:var(--ink-2);font-size:.9rem;margin-bottom:6px}
+.theme{position:absolute;top:20px;right:16px;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);cursor:pointer;padding:0}
+.theme:hover{border-color:var(--you)}
+.theme svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.theme .sun{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .theme .sun{display:block}:root:not([data-theme="light"]) .theme .moon{display:none}}
+:root[data-theme="dark"] .theme .sun{display:block}
+:root[data-theme="dark"] .theme .moon{display:none}
+.task{background:var(--panel);border-left:4px solid var(--you);border-radius:0 10px 10px 0;padding:10px 14px;margin:14px 0 4px;max-width:78ch}
+.task p{margin:0}.task p+p{margin-top:6px;color:var(--ink-2)}
+h2.sec{font-size:1.3rem;font-weight:700;margin:30px 0 4px;padding-top:10px;border-top:1px solid var(--line)}
+h2.sec .min{font-weight:400;color:var(--ink-2);font-size:.95rem;margin-left:8px}
+h3{font-size:1.05rem;margin:18px 0 6px}
+p{max-width:78ch}
+ol.todo{list-style:none;padding:0;margin:8px 0;counter-reset:s}
+ol.todo li{position:relative;padding:8px 10px 8px 46px;margin:0 0 6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;max-width:78ch}
+ol.todo li::before{counter-increment:s;content:counter(s);position:absolute;left:12px;top:8px;width:24px;height:24px;border-radius:50%;background:var(--you);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+ol.todo li label{display:block;cursor:pointer}
+ol.todo li input{accent-color:var(--you);margin:0 8px 0 0;vertical-align:-2px}
+ol.todo li.done label{color:var(--ink-2);text-decoration:line-through}
+.obs{border-left:4px solid var(--best);background:var(--panel);border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;max-width:78ch}
+.obs p{margin:0}.obs p+p{margin-top:6px}
+.obs .lbl,details.check summary .lbl{font-weight:700;color:var(--best)}
+details.check{border:1px dashed var(--line);border-radius:10px;padding:8px 14px;margin:10px 0;max-width:78ch;background:var(--panel)}
+details.check summary{cursor:pointer;font-weight:500}
+details.check summary .lbl{color:var(--you)}
+details.check[open] summary{margin-bottom:6px}
+details.help{border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin:14px 0;background:var(--panel)}
+details.help summary{cursor:pointer;font-weight:700}
+details.help ul{padding-left:20px;margin:6px 0}
+details.help li{margin:4px 0;max-width:78ch}
+table{border-collapse:collapse;margin:8px 0;font-size:.93rem}
+th,td{border:1px solid var(--line);padding:5px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+b.w{font-weight:700;color:var(--you)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+kbd{font:inherit;font-size:.9em;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--panel)}
+.links a{color:var(--you)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:32px;padding-top:12px;border-top:1px solid var(--line);font-size:.95rem}
+.nav a{color:var(--you)}
+.blank{display:inline-block;min-width:4em;border-bottom:1px solid var(--ink-2);vertical-align:bottom}
+</style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<button class="theme" id="theme" type="button" aria-label="Alternar modo claro e escuro" title="Modo claro / escuro"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+<header>
+  <div class="steps">Orange · prática 3 de 3 · 60 min, em duplas</div>
+  <h1>Agrupamento: quem são os clientes de cartão?</h1>
+  <p>O produto de cartões quer três ou quatro campanhas, uma por perfil de cliente, e ninguém sabe quais são os perfis. O arquivo tem 8.950 clientes ao longo de seis meses e 17 medidas de uso: saldo, compras, saques, frequências, limite, pagamentos. Você vai deixar o k-Means propor os grupos e decidir se eles fazem sentido para o negócio.</p>
+</header>
+<div class="task"><p>Ao final, a dupla entrega uma tabela com um nome, o tamanho, o que o caracteriza e uma ação comercial para cada grupo.</p><p>Sem coluna alvo, o grupo é bom quando a área de negócio consegue nomeá-lo e agir sobre ele.</p></div>
+
+<h2 class="sec" style="border-top:0;margin-top:20px">Antes de começar<span class="min">5 min</span></h2>
+<p class="links">Baixe o <a href="orange/p3_agrupamento_inicio.ows" download>workflow de início</a> e abra no Orange (<b>File → Open</b>, ou arraste o arquivo para a tela). Os dados são carregados pela internet; se a rede bloquear, baixe o <a href="data/cartao.csv">CSV</a>, abra o widget <b class="w">File</b>, escolha a aba de arquivo local e aponte para ele.</p>
+<p>A parte da esquerda do workflow já está ligada (carga e exploração). Os widgets da direita estão soltos: ligar e configurar cada um deles é o trabalho desta prática. Se travar em algum ponto, o <a class="links" href="orange/p3_agrupamento_completo.ows" download>workflow completo</a> tem tudo ligado.</p>
+
+<details class="help" open>
+<summary>Como mexer no Orange</summary>
+<ul>
+<li><b>Widgets</b> são as caixas na tela. Duplo clique abre a janela do widget; fechar a janela não apaga o widget.</li>
+<li><b>Ligar dois widgets:</b> arraste a partir da borda direita de um (a saída) até a borda esquerda do outro (a entrada). Quando houver mais de um canal possível, o Orange abre uma janela para você escolher qual saída vai em qual entrada.</li>
+<li><b>Desfazer uma ligação:</b> clique na linha e aperte <kbd>Delete</kbd>. Ligar uma nova fonte a uma entrada que só aceita uma ligação substitui a anterior.</li>
+<li><b>Adicionar um widget:</b> na barra da esquerda, abra a categoria (Data, Visualize, Model, Evaluate, Unsupervised) e clique no widget, ou arraste-o para a tela.</li>
+<li><b>Os resultados atualizam sozinhos</b> quando uma ligação muda. Alguns widgets têm o botão <b>Apply</b> ou a caixa <b>Send Automatically</b>; se um número não mudou, confira se o botão foi clicado.</li>
+<li><b>Linhas tracejadas</b> entre widgets significam que nada passou ainda por aquela ligação (o widget de origem ainda não produziu saída).</li>
+<li><b>Papéis das colunas:</b> no widget <b class="w">File</b>, a tabela mostra cada coluna como <i>feature</i>, <i>target</i> ou <i>meta</i>. Os arquivos destas práticas já chegam com o papel certo; não é preciso alterar.</li>
+</ul>
+</details><section id="explorar"><h2 class="sec">1. Explorar os dados<span class="min">5–15 min</span></h2><p>Não há coluna alvo: ninguém disse quais são os grupos. A coluna <code>cliente</code> é só identificador e já chega marcada como meta, fora do cálculo.</p><ol class="todo"><li><label><input type="checkbox">Abra o <b class="w">Feature Statistics</b>. Compare a escala de <code>saldo</code>, <code>compras</code> e <code>limite</code> com a das frequências (<code>freq_compras</code>, <code>freq_saque</code>). Veja a coluna de valores faltantes.</label></li><li><label><input type="checkbox">Abra o <b class="w">Data Table</b> e passe os olhos em dez clientes. Dá para descrever algum perfil só de olhar?</label></li><li><label><input type="checkbox">Ligue <b class="w">File</b> → <b class="w">Scatter Plot</b> por enquanto (a ligação muda quando o k-Means entrar). Coloque <code>compras</code> em x e <code>saque</code> em y.</label></li><li><label><input type="checkbox">Pergunta da dupla: uma distância euclidiana entre dois clientes, calculada com todas as colunas do jeito que estão, seria dominada por quais colunas?</label></li></ol><div class="obs"><p><span class="lbl">Observe.</span> Saldo vai de 0 a 19 mil; frequências vão de 0 a 1. Sem tratamento, as colunas em dinheiro decidem tudo e as frequências não contam.</p><p>No gráfico compras × saque, a maioria dos pontos está colada em um dos eixos: quase ninguém compra muito e saca muito ao mesmo tempo. Há 313 valores faltantes em <code>pagamento_minimo</code> e 1 em <code>limite</code>; o k-Means do Orange preenche com a média, sem avisar.</p></div><details class="check"><summary><span class="lbl">Confira:</span> o que você deve ter visto</summary><p>8.950 clientes e 17 colunas numéricas. Saldo 0–19.043, compras 0–49.040, limite 50–30.000, frequências 0–1.</p></details></section><section id="construir"><h2 class="sec">2. Agrupar e dar nome aos grupos<span class="min">15–40 min</span></h2><p>O k-Means precisa saber quantos grupos procurar. O widget testa vários valores de k e mostra a silhueta de cada um: quanto maior, mais separados os grupos.</p><ol class="todo"><li><label><input type="checkbox">Ligue <b class="w">File</b> → <b class="w">k-Means</b>. Abra o widget: em <b>Number of Clusters</b>, confira <b>From 2 to 10</b>; <b>Normalize columns</b> marcado; <b>Re-runs</b> 10. Espere a tabela de silhuetas aparecer (até um minuto).</label></li><li><label><input type="checkbox">Anote a silhueta de cada k. Qual k tem a maior? Clique na linha desse k para selecioná-lo.</label></li><li><label><input type="checkbox">Ligue <b class="w">k-Means</b> → <b class="w">Silhouette Plot</b>. Cada barra é um cliente; barras negativas são clientes que ficariam melhor em outro grupo.</label></li><li><label><input type="checkbox">Ligue <b class="w">k-Means</b> → <b class="w">Scatter Plot</b> (isso substitui a ligação que vinha do File). Em <b>Color</b>, escolha <code>Cluster</code>. Veja compras × saque, depois saldo × limite e freq_compras × freq_saque.</label></li><li><label><input type="checkbox">Ligue <b class="w">k-Means</b> → <b class="w">Box Plot</b>. Em <b>Subgroups</b>, escolha <code>Cluster</code>. Troque a <b>Variable</b> uma por vez: <code>saldo</code>, <code>compras</code>, <code>saque</code>, <code>freq_compras</code>, <code>pct_pagamento_total</code>.</label></li><li><label><input type="checkbox">Preencha uma linha por grupo: nome, tamanho, o que o caracteriza, uma ação comercial. Use o <b class="w">Box Plot</b> para a característica e o <b class="w">Silhouette Plot</b> para o tamanho.</label></li></ol><table><thead><tr><th>Grupo</th><th>Nome</th><th>Tamanho</th><th>O que o caracteriza</th><th>Ação comercial</th></tr></thead><tbody><tr><td>A</td><td><span class="blank"></span></td><td><span class="blank"></span></td><td><span class="blank" style="min-width:12em"></span></td><td><span class="blank" style="min-width:12em"></span></td></tr><tr><td>B</td><td><span class="blank"></span></td><td><span class="blank"></span></td><td><span class="blank" style="min-width:12em"></span></td><td><span class="blank" style="min-width:12em"></span></td></tr><tr><td>C</td><td><span class="blank"></span></td><td><span class="blank"></span></td><td><span class="blank" style="min-width:12em"></span></td><td><span class="blank" style="min-width:12em"></span></td></tr></tbody></table><div class="obs"><p><span class="lbl">Observe.</span> A silhueta máxima é baixa em termos absolutos (em torno de 0,25): os grupos existem, mas se sobrepõem. Eles servem para segmentar campanhas, desde que ninguém os trate como caixas estanques.</p><p>A numeração dos grupos (C1, C2, C3) muda de máquina para máquina. Compare pelos perfis, não pelos números.</p></div><details class="check"><summary><span class="lbl">Confira:</span> números esperados (normalizado, k = 3)</summary><p>Silhueta por k: 2 → 0,21; <b>3 → 0,25</b>; 4 → 0,20; 5 → 0,19; de 6 a 10 entre 0,20 e 0,22.</p><table><thead><tr><th>Grupo</th><th class=n>n</th><th class=n>Saldo médio</th><th class=n>Compras</th><th class=n>Saque</th><th class=n>Freq. compras</th><th class=n>Freq. saque</th><th class=n>Limite</th><th class=n>Pag. integral</th><th class=n>Nome sugerido</th></tr></thead><tbody><tr><td>A</td><td class=n>6.108</td><td class=n>804</td><td class=n>500</td><td class=n>335</td><td class=n>0,46</td><td class=n>0,07</td><td class=n>3.266</td><td class=n>15 %</td><td class=n>Pouco uso</td></tr><tr><td>B</td><td class=n>1.261</td><td class=n>2.190</td><td class=n>4.214</td><td class=n>453</td><td class=n>0,95</td><td class=n>0,06</td><td class=n>7.682</td><td class=n>30 %</td><td class=n>Compradores</td></tr><tr><td>C</td><td class=n>1.581</td><td class=n>4.003</td><td class=n>387</td><td class=n>3.887</td><td class=n>0,23</td><td class=n>0,45</td><td class=n>6.697</td><td class=n>3 %</td><td class=n>Sacadores</td></tr></tbody></table><p>Com k = 4, os compradores se dividem em frequentes (3.367) e grandes compradores (409, compras médias de 7.700). Também é um resultado defensável para campanha.</p></details></section><section id="quebrar"><h2 class="sec">3. Quebrar o modelo: a escala de novo, e uma coluna a menos<span class="min">40–50 min</span></h2><p>O algoritmo só vê as colunas que recebe, na escala em que chegam. Mudar uma das duas coisas produz grupos diferentes.</p><ol class="todo"><li><label><input type="checkbox">No <b class="w">k-Means</b>, mude para <b>Fixed: 3</b> e desmarque <b>Normalize columns</b>. Olhe de novo o <b class="w">Box Plot</b> de <code>saldo</code> e <code>compras</code> e o tamanho dos grupos no <b class="w">Silhouette Plot</b>.</label></li><li><label><input type="checkbox">Marque <b>Normalize columns</b> de volta.</label></li><li><label><input type="checkbox">Se sobrar tempo: adicione um <b class="w">Select Columns</b> (categoria Data) entre <b class="w">File</b> e <b class="w">k-Means</b>, mova <code>saque</code> e <code>freq_saque</code> para <b>Ignored</b> e rode de novo com k = 3. Que grupo desapareceu?</label></li><li><label><input type="checkbox">Ligue <b class="w">k-Means</b> → <b class="w">PCA</b> e <b class="w">PCA</b> → <b class="w">Scatter Plot (PCA)</b>, escolhendo <b>Transformed Data → Data</b>. No gráfico, PC1 em x, PC2 em y e <code>Cluster</code> em <b>Color</b>.</label></li></ol><div class="obs"><p><span class="lbl">Observe.</span> Sem normalizar, os grupos viram pequeno, médio e grande em dinheiro, e o terceiro grupo tem 134 pessoas. O comportamento (compra ou saca) some, porque as colunas de frequência deixam de pesar.</p><p>Sem as colunas de saque, o grupo dos sacadores não existe: o algoritmo só encontra o que está nas colunas que recebe.</p></div><details class="check"><summary><span class="lbl">Confira:</span> números esperados (sem normalizar, k = 3)</summary><p>Grupos de 6.514 (saldo 855, compras 603), 2.302 (saldo 3.384, compras 1.586, saque 2.091) e 134 (saldo 4.797, compras 10.471, pagamentos 17.991).</p><p>No PCA com duas componentes, coloridas por grupo, há separação parcial com muita sobreposição.</p></details></section><section id="fechar"><h2 class="sec">4. Anotar e discutir<span class="min">50–60 min</span></h2><p>Cada dupla lê o nome que deu a um dos grupos. Os nomes convergem entre as duplas? Depois, discutam:</p>
+<ul>
+<li>Os sacadores pagam só o mínimo em 97 % dos meses. Isso é um grupo de receita de juros ou um grupo de risco? Quem decide?</li>
+<li>Se o produto pediu quatro campanhas e a silhueta prefere três grupos, o que você entrega?</li>
+<li>Sem rótulo não existe gabarito. Então o que torna um agrupamento bom?</li>
+<li>Em que momento um cliente muda de grupo, e como o banco saberia?</li>
+</ul></section>
+<p class="note">Marcações das etapas ficam salvas neste navegador. <button class="btn" id="reset" type="button" style="font-size:.85rem;padding:3px 8px">Limpar marcações</button></p>
+<nav class="nav"><span><a href="p2-classificacao.html">← Prática 2: classificação</a></span><span><a href="index.html">Índice →</a></span></nav>
+</div>
+<script>
+(function(){const b=document.getElementById('theme');if(!b)return;
+const dark=()=>{const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme:dark)').matches;};
+b.addEventListener('click',()=>{const next=dark()?'light':'dark';document.documentElement.dataset.theme=next;
+  try{localStorage.setItem('theme',next)}catch(e){}});})();
+(function(){const key='todo:'+location.pathname;let st={};try{st=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+document.querySelectorAll('ol.todo li').forEach((li,i)=>{const cb=li.querySelector('input');if(!cb)return;const id=li.closest('section').id+':'+i;
+  if(st[id]){cb.checked=true;li.classList.add('done');}
+  cb.addEventListener('change',()=>{li.classList.toggle('done',cb.checked);st[id]=cb.checked;try{localStorage.setItem(key,JSON.stringify(st))}catch(e){}});});
+const r=document.getElementById('reset');if(r)r.addEventListener('click',()=>{st={};try{localStorage.removeItem(key)}catch(e){}
+  document.querySelectorAll('ol.todo li').forEach(li=>{const cb=li.querySelector('input');if(cb)cb.checked=false;li.classList.remove('done');});});})();
+</script>
+</body>
+</html>

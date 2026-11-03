@@ -241,7 +241,7 @@ pages=[
   "<p>Escolha um grupo, ajuste a reta para ele e trave. O erro nas pessoas de fora aparece junto com os pontos vazados.</p><p>Repita com outro grupo. Em qual caso o erro de fora ficou mais longe do erro de treino, e por quê? No 70 % aleatório, use o seu número da lista como semente e compare os coeficientes com os colegas.</p>",
   dict(base,subsets=True,must=True,reveal=True)),
  ("4-gradiente.html", STEPS[3],
-  "O mapa à direita mostra o erro para cada par (a, b): a inclinação a na vertical, o intercepto b na horizontal. Um algoritmo não enxerga o mapa inteiro: só sente a inclinação onde está e dá um passo ladeira abaixo.",
+  "O mapa à direita mostra o erro para cada par (a, b): a inclinação a na vertical, o intercepto b na horizontal. Um algoritmo só sente a inclinação do ponto onde está e dá um passo ladeira abaixo; ele nunca vê o mapa inteiro.",
   "<p>Dê alguns passos de gradiente e observe a trilha no mapa. Aumente η até divergir; diminua até parar de andar.</p><p>Depois marque <b>centralizar x</b>, olhe a forma do vale e repita. Por que ficou tão mais fácil?</p>",
   dict(base,gd=True,reveal=True)),
 ]

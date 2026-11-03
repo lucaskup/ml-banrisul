@@ -4,7 +4,7 @@ Nov 3, 2026 · @Lucas Kupssinskü
 
 ## Visão geral
 
-Três práticas de 60 minutos no Orange, em duplas, uma por tarefa de aprendizado: regressão linear (custo de seguro), regressão logística e KNN (risco de crédito) e k-means (segmentação de clientes de cartão). Cada prática segue o mesmo relógio, o que reduz a carga de explicar o formato três vezes.
+O material tem três práticas de 60 minutos no Orange, em duplas, uma por tarefa de aprendizado: regressão linear (custo de seguro), regressão logística e KNN (risco de crédito) e k-means (segmentação de clientes de cartão). Cada prática segue o mesmo relógio, o que reduz a carga de explicar o formato três vezes.
 
 | Bloco | Minutos | O que acontece |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ Três práticas de 60 minutos no Orange, em duplas, uma por tarefa de aprendizad
 | Quebra o modelo | 40–50 | Uma alteração proposital que muda o resultado; a dupla explica por quê |
 | Fechamento | 50–60 | Cada dupla reporta um número; você compara no quadro e conduz a discussão |
 
-Duplas porque uma pessoa opera o Orange enquanto a outra lê e interpreta; troque os papéis aos 30 minutos. Com 50 pessoas são 25 duplas; o fechamento funciona com cada dupla dizendo um único número em voz alta enquanto você anota no quadro, o que leva cerca de 3 minutos e já mostra a variância entre duplas.
+O trabalho é em duplas porque uma pessoa opera o Orange enquanto a outra lê e interpreta; troque os papéis aos 30 minutos. Com 50 pessoas são 25 duplas; o fechamento funciona com cada dupla dizendo um único número em voz alta enquanto você anota no quadro, o que leva cerca de 3 minutos e já mostra a variância entre duplas.
 
 Materiais, todos no repositório do curso ([lucaskup.github.io/ml-banrisul](https://lucaskup.github.io/ml-banrisul/)):
 
@@ -26,7 +26,7 @@ O widget File do Orange aceita URL, então os workflows apontam direto para os C
 
 ## Prática 1 – Regressão: quanto custa o seguro desta pessoa?
 
-A lição central: a regressão linear explica 75 % da variação do custo com sete variáveis e um coeficiente legível por variável; o kNN sem normalização explica 28 % porque a escala de idade e IMC esconde a variável que mais importa (fumante), e com normalização passa a 77 %.
+A regressão linear explica 75 % da variação do custo com sete variáveis e um coeficiente legível por variável; o kNN sem normalização explica 28 % porque a escala de idade e IMC esconde a variável que mais importa (fumante), e com normalização passa a 77 %.
 
 **Dataset.** `insurance.csv`: 1.338 segurados de um plano de saúde nos EUA; idade, sexo, IMC, filhos, fumante, região e o alvo `custo_anual` em dólares (média 13.270, mediana 9.382, máximo 63.770). O arquivo já marca `custo_anual` como alvo no cabeçalho, então o widget File abre com o papel certo. Pergunta de negócio: a corretora precisa cotar um prêmio para uma pessoa nova; quais características pesam, e quanto?
 
@@ -59,14 +59,14 @@ Coeficientes da regressão linear (widget Linear Regression, saída Coefficients
 
 ## Prática 2 – Classificação: aprovar ou negar o crédito?
 
-A lição central: acurácia engana quando as classes são desbalanceadas e os erros custam diferente. Aprovar todo mundo acerta 70 %; a regressão logística acerta 75 % e corta o custo pela metade; baixar o limiar de 0,5 para 0,2 derruba a acurácia para 66 % e corta o custo em mais um terço.
+Acurácia engana quando as classes são desbalanceadas e os erros custam diferente. Aprovar todo mundo acerta 70 %; a regressão logística acerta 75 % e corta o custo pela metade; baixar o limiar de 0,5 para 0,2 derruba a acurácia para 66 % e corta o custo em mais um terço.
 
 **Dataset.** `german_credit.csv` (Statlog German Credit, UCI): 1.000 solicitantes de um banco alemão nos anos 1990, 20 atributos (conta corrente, prazo, valor, histórico, poupança, emprego, estado civil e sexo, idade, moradia, ocupação, etc.) e o alvo `risco` com 700 bons e 300 maus. Nomes de coluna em português, valores em inglês como no original. A matriz de custo acompanha o dataset: aprovar um mau pagador custa 5, negar um bom custa 1. Pergunta de negócio: a mesa de crédito quer um modelo que diga quem negar; o que é “um modelo bom” aqui?
 
 **Roteiro.**
 
 1. 0–5: mostre o Distributions de `risco`. Pergunte: um modelo que aprova todo mundo acerta quanto? (70 %.) Escreva 70 % no quadro e deixe lá a aula inteira.
-2. 5–15: duplas abrem `p2_classificacao_inicio.ows`. No Rank, `conta_corrente`, `prazo_meses`, `historico_credito` e `poupanca` lideram. No Distributions, `conta_corrente` dividido por risco: quem não tem conta corrente é o grupo mais seguro, uma peculiaridade conhecida desse dataset que rende uma pergunta boa (quem são essas pessoas?).
+2. 5–15: duplas abrem `p2_classificacao_inicio.ows`. No Rank, `conta_corrente`, `prazo_meses`, `historico_credito` e `poupanca` lideram. No Distributions, `conta_corrente` dividido por risco: quem não tem conta corrente é o grupo mais seguro, uma peculiaridade conhecida desse dataset que rende uma pergunta para a turma: quem são essas pessoas?.
 3. 15–40: ligam File → Test and Score, Logistic Regression e kNN → Test and Score, e Test and Score → Confusion Matrix. Com a matriz na tela, cada dupla calcula o custo de cada modelo: 5 × (maus aprovados) + 1 × (bons negados). O kNN sem normalizar perde para “aprovar todo mundo” em acurácia; a logística ganha em tudo.
 4. 40–50 (quebra): no Confusion Matrix, selecionar a célula “mau previsto como bom” e mandar para um Data Table: são os 158 clientes que o modelo aprovaria e que deram prejuízo. Depois, o limiar: no Predictions ligado à Logistic Regression, ordenar pela probabilidade de `mau` e contar quantos seriam negados com corte 0,3 em vez de 0,5. Opcional: Preprocess (Normalize) → kNN, que sobe o kNN de 65 % para 73 %.
 5. 50–60: cada dupla reporta o custo do melhor modelo. Encerramento com dois pontos: o modelo de menor acurácia pode ser o de menor custo, e `estado_civil_sexo` está entre os 12 atributos de maior peso. Removê-lo custa 0,6 ponto de acurácia; mantê-lo expõe o banco a uma decisão de crédito que depende de sexo e estado civil. O que o Banrisul faria?
@@ -102,7 +102,7 @@ O mínimo de custo fica perto de t = 0,2, onde o banco nega mais da metade dos p
 
 ## Prática 3 – Agrupamento: quem são os clientes de cartão?
 
-A lição central: sem rótulo não existe gabarito, então o grupo é bom quando a área de negócio consegue nomeá-lo e agir sobre ele. Com normalização, o k-Means separa três comportamentos (pouco uso, compradores, sacadores); sem normalização, separa três faixas de valor, e o terceiro grupo são 134 clientes enormes.
+Sem rótulo não existe gabarito, então o grupo é bom quando a área de negócio consegue nomeá-lo e agir sobre ele. Com normalização, o k-Means separa três comportamentos (pouco uso, compradores, sacadores); sem normalização, separa três faixas de valor, e o terceiro grupo são 134 clientes enormes.
 
 **Dataset.** `cartao.csv` (Credit Card Dataset for Clustering, Kaggle): 8.950 clientes de cartão ao longo de seis meses, 17 variáveis de uso: saldo, compras à vista e parceladas, saque (cash advance), frequências de cada um, número de transações, limite, pagamentos, pagamento mínimo, percentual de meses com pagamento integral e tempo de cliente. A coluna `cliente` é identificador e o arquivo já a marca como meta. Há 313 valores faltantes em `pagamento_minimo` e 1 em `limite`; o k-Means do Orange imputa pela média sem avisar, o que vale mencionar. Pergunta de negócio: o produto de cartões quer três ou quatro campanhas, uma por perfil; quais são os perfis?
 
@@ -146,4 +146,4 @@ Sem normalizar, k = 3: grupos de 6.514 (saldo 855, compras 603), 2.302 (saldo 3.
 | Confusion Matrix mostra números estranhos | Está em proporção e não em contagem | Mudar “Show” para “Number of instances” |
 | Predictions não aceita o modelo | A entrada Predictors precisa do Model, e o widget do modelo precisa receber Data | Ligar File → Linear Regression (Data) e depois Linear Regression → Predictions (Model) |
 
-Dois cuidados de preparação: abra os três workflows completos (`*_completo.ows`) na máquina da sala na véspera, com a rede do banco, e deixe uma cópia dos CSV em pendrive. O Orange guarda a URL no workflow, então qualquer troca de endereço no GitHub Pages exige regenerar os arquivos `.ows`.
+Preparação na véspera: abra os três workflows completos (`*_completo.ows`) na máquina da sala na véspera, com a rede do banco, e deixe uma cópia dos CSV em pendrive. O Orange guarda a URL no workflow, então qualquer troca de endereço no GitHub Pages exige regenerar os arquivos `.ows`.

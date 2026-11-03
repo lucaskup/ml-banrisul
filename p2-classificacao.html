@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orange 2. Classificação: aprovar ou negar o crédito?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f4f1;--panel:#ffffff;--ink:#17202b;--ink-2:#55616e;--line:#d6dad4;--grid:#e9ebe6;
+  --m:#2f6fde;--f:#e0559e;--n:#9aa3ad;--you:#0e7c7b;--best:#d98c1f;--err:#c6303e;
+  --heat0:#f8f1d8;--heat1:#1b1f3a;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#141a21;--panel:#1d252e;--ink:#eef1f4;--ink-2:#a9b4bf;--line:#34404c;--grid:#283239;
+  --m:#6d9bf2;--f:#f07bb8;--n:#6f7a86;--you:#3fd0c5;--best:#f0b04a;--err:#ff6b78;--heat0:#2a2f27;--heat1:#f4e6a8}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#141a21;--panel:#1d252e;--ink:#eef1f4;--ink-2:#a9b4bf;--line:#34404c;--grid:#283239;
+  --m:#6d9bf2;--f:#f07bb8;--n:#6f7a86;--you:#3fd0c5;--best:#f0b04a;--err:#ff6b78;--heat0:#2a2f27;--heat1:#f4e6a8}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+header h1{font-size:1.9rem;font-weight:700;margin:0 0 4px;letter-spacing:-.01em}
+header p{margin:0;color:var(--ink-2);max-width:70ch}
+.eq{font-size:1.35rem;font-weight:500;margin:14px 0 6px}
+.eq b{font-weight:700;color:var(--you)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:.92rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--you);outline-offset:2px}
+.seed{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-size:.92rem}
+.seed input{width:64px;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;margin-top:12px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.panel h2{font-size:1rem;font-weight:700;margin:0 0 8px}
+svg{display:block;width:100%;height:auto}
+.axis text{fill:var(--ink-2);font-size:11px}
+.axis line,.axis path{stroke:var(--line)}
+.gridl{stroke:var(--grid)}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px 10px;margin:8px 0}
+.ctl label{font-weight:500}
+.ctl input[type=range]{width:100%;accent-color:var(--you)}
+.ctl input[type=number]{width:84px;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.met{border-top:3px solid var(--you);padding:6px 0 0}
+.met.test{border-top-color:var(--n)}
+.met h3{font-size:.85rem;font-weight:500;color:var(--ink-2);margin:0 0 2px}
+.met .big{font-size:1.6rem;font-weight:700;line-height:1.1}
+.met .sm{font-size:.85rem;color:var(--ink-2)}
+.row{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:8px 0;font-size:.95rem}
+.row label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.btn{font:inherit;font-size:.92rem;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--you);border-color:var(--you);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.note{color:var(--ink-2);font-size:.9rem;margin:8px 0 0}
+.note a{color:inherit}
+.dot{display:inline-block;width:.7em;height:.7em;border-radius:50%;margin-right:.3em;vertical-align:middle}
+.hollow{display:inline-block;width:.6em;height:.6em;border-radius:50%;border:2px solid var(--ink-2);margin-right:.3em;vertical-align:middle}
+.heatwrap{position:relative;margin-top:6px}
+.heatwrap canvas{width:100%;height:auto;display:block;border-radius:6px;cursor:crosshair}
+.heatwrap svg{position:absolute;inset:0;pointer-events:none}
+.warn{color:var(--err);font-weight:500}
+.best{color:var(--best);font-weight:700}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:no-preference){.trail circle{transition:none}}
+
+.wrap{position:relative;max-width:900px}
+header{padding-right:56px}
+.steps{color:var(--ink-2);font-size:.9rem;margin-bottom:6px}
+.theme{position:absolute;top:20px;right:16px;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);cursor:pointer;padding:0}
+.theme:hover{border-color:var(--you)}
+.theme svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.theme .sun{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .theme .sun{display:block}:root:not([data-theme="light"]) .theme .moon{display:none}}
+:root[data-theme="dark"] .theme .sun{display:block}
+:root[data-theme="dark"] .theme .moon{display:none}
+.task{background:var(--panel);border-left:4px solid var(--you);border-radius:0 10px 10px 0;padding:10px 14px;margin:14px 0 4px;max-width:78ch}
+.task p{margin:0}.task p+p{margin-top:6px;color:var(--ink-2)}
+h2.sec{font-size:1.3rem;font-weight:700;margin:30px 0 4px;padding-top:10px;border-top:1px solid var(--line)}
+h2.sec .min{font-weight:400;color:var(--ink-2);font-size:.95rem;margin-left:8px}
+h3{font-size:1.05rem;margin:18px 0 6px}
+p{max-width:78ch}
+ol.todo{list-style:none;padding:0;margin:8px 0;counter-reset:s}
+ol.todo li{position:relative;padding:8px 10px 8px 46px;margin:0 0 6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;max-width:78ch}
+ol.todo li::before{counter-increment:s;content:counter(s);position:absolute;left:12px;top:8px;width:24px;height:24px;border-radius:50%;background:var(--you);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+ol.todo li label{display:block;cursor:pointer}
+ol.todo li input{accent-color:var(--you);margin:0 8px 0 0;vertical-align:-2px}
+ol.todo li.done label{color:var(--ink-2);text-decoration:line-through}
+.obs{border-left:4px solid var(--best);background:var(--panel);border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;max-width:78ch}
+.obs p{margin:0}.obs p+p{margin-top:6px}
+.obs .lbl,details.check summary .lbl{font-weight:700;color:var(--best)}
+details.check{border:1px dashed var(--line);border-radius:10px;padding:8px 14px;margin:10px 0;max-width:78ch;background:var(--panel)}
+details.check summary{cursor:pointer;font-weight:500}
+details.check summary .lbl{color:var(--you)}
+details.check[open] summary{margin-bottom:6px}
+details.help{border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin:14px 0;background:var(--panel)}
+details.help summary{cursor:pointer;font-weight:700}
+details.help ul{padding-left:20px;margin:6px 0}
+details.help li{margin:4px 0;max-width:78ch}
+table{border-collapse:collapse;margin:8px 0;font-size:.93rem}
+th,td{border:1px solid var(--line);padding:5px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+b.w{font-weight:700;color:var(--you)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+kbd{font:inherit;font-size:.9em;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--panel)}
+.links a{color:var(--you)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:32px;padding-top:12px;border-top:1px solid var(--line);font-size:.95rem}
+.nav a{color:var(--you)}
+.blank{display:inline-block;min-width:4em;border-bottom:1px solid var(--ink-2);vertical-align:bottom}
+</style>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+<button class="theme" id="theme" type="button" aria-label="Alternar modo claro e escuro" title="Modo claro / escuro"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+<header>
+  <div class="steps">Orange · prática 2 de 3 · 60 min, em duplas</div>
+  <h1>Classificação: aprovar ou negar o crédito?</h1>
+  <p>A mesa de crédito quer um modelo que diga quem negar. O arquivo tem 1.000 solicitantes de um banco alemão nos anos 1990, com 20 atributos (conta corrente, prazo, valor, histórico, poupança, emprego, idade, moradia) e o resultado: 700 pagaram, 300 não. Você vai comparar regressão logística e kNN, e descobrir por que acurácia engana quando os erros custam diferente.</p>
+</header>
+<div class="task"><p>Ao final, a dupla entrega: a matriz de confusão de cada modelo, o custo de cada um (5 por mau aprovado, 1 por bom negado) e o corte de probabilidade que a dupla escolheria.</p><p>Referência: aprovar todo mundo acerta 70 % e custa 1.500. Qualquer modelo tem que bater isso.</p></div>
+
+<h2 class="sec" style="border-top:0;margin-top:20px">Antes de começar<span class="min">5 min</span></h2>
+<p class="links">Baixe o <a href="orange/p2_classificacao_inicio.ows" download>workflow de início</a> e abra no Orange (<b>File → Open</b>, ou arraste o arquivo para a tela). Os dados são carregados pela internet; se a rede bloquear, baixe o <a href="data/german_credit.csv">CSV</a>, abra o widget <b class="w">File</b>, escolha a aba de arquivo local e aponte para ele.</p>
+<p>A parte da esquerda do workflow já está ligada (carga e exploração). Os widgets da direita estão soltos: ligar e configurar cada um deles é o trabalho desta prática. Se travar em algum ponto, o <a class="links" href="orange/p2_classificacao_completo.ows" download>workflow completo</a> tem tudo ligado.</p>
+
+<details class="help" open>
+<summary>Como mexer no Orange</summary>
+<ul>
+<li><b>Widgets</b> são as caixas na tela. Duplo clique abre a janela do widget; fechar a janela não apaga o widget.</li>
+<li><b>Ligar dois widgets:</b> arraste a partir da borda direita de um (a saída) até a borda esquerda do outro (a entrada). Quando houver mais de um canal possível, o Orange abre uma janela para você escolher qual saída vai em qual entrada.</li>
+<li><b>Desfazer uma ligação:</b> clique na linha e aperte <kbd>Delete</kbd>. Ligar uma nova fonte a uma entrada que só aceita uma ligação substitui a anterior.</li>
+<li><b>Adicionar um widget:</b> na barra da esquerda, abra a categoria (Data, Visualize, Model, Evaluate, Unsupervised) e clique no widget, ou arraste-o para a tela.</li>
+<li><b>Os resultados atualizam sozinhos</b> quando uma ligação muda. Alguns widgets têm o botão <b>Apply</b> ou a caixa <b>Send Automatically</b>; se um número não mudou, confira se o botão foi clicado.</li>
+<li><b>Linhas tracejadas</b> entre widgets significam que nada passou ainda por aquela ligação (o widget de origem ainda não produziu saída).</li>
+<li><b>Papéis das colunas:</b> no widget <b class="w">File</b>, a tabela mostra cada coluna como <i>feature</i>, <i>target</i> ou <i>meta</i>. Os arquivos destas práticas já chegam com o papel certo; não é preciso alterar.</li>
+</ul>
+</details><section id="explorar"><h2 class="sec">1. Explorar os dados<span class="min">5–15 min</span></h2><p>O alvo é <code>risco</code>: bom ou mau pagador. Junto com o arquivo vem uma matriz de custo: <b>aprovar um mau pagador custa 5; negar um bom pagador custa 1</b>. Toda a prática gira em torno desse custo.</p><ol class="todo"><li><label><input type="checkbox">Abra o <b class="w">Distributions</b> e escolha <code>risco</code>. Quantos bons e quantos maus? Se um modelo aprovasse todo mundo, qual seria a acurácia dele? Escreva esse número num canto da folha.</label></li><li><label><input type="checkbox">Abra o <b class="w">Rank</b>. Quais quatro colunas aparecem no topo?</label></li><li><label><input type="checkbox">No <b class="w">Distributions</b>, escolha <code>conta_corrente</code> e, em <b>Split by</b>, <code>risco</code>. Qual grupo tem a menor fração de maus pagadores?</label></li><li><label><input type="checkbox">Abra o <b class="w">Data Table</b> e procure a coluna <code>estado_civil_sexo</code>. Ela deveria entrar num modelo de crédito? Anote a opinião da dupla para a etapa 4.</label></li></ol><div class="obs"><p><span class="lbl">Observe.</span> Quem não tem conta corrente no banco é o grupo mais seguro deste conjunto. Isso contraria a intuição e rende uma pergunta: quem são essas pessoas?</p><p>O número que você escreveu no canto (a acurácia de aprovar todo mundo) é a referência: qualquer modelo com acurácia menor que isso está perdendo para não fazer nada.</p></div><details class="check"><summary><span class="lbl">Confira:</span> o que você deve ter visto</summary><p>700 bons e 300 maus; aprovar todo mundo acerta 70 %. No Rank, <code>conta_corrente</code>, <code>prazo_meses</code>, <code>historico_credito</code> e <code>poupanca</code> lideram.</p></details></section><section id="construir"><h2 class="sec">2. Construir, avaliar e calcular o custo<span class="min">15–40 min</span></h2><p>Dois classificadores entram na validação cruzada: regressão logística e kNN. A matriz de confusão mostra os dois tipos de erro, e é dela que sai o custo.</p><ol class="todo"><li><label><input type="checkbox">Ligue <b class="w">File</b> → <b class="w">Test and Score</b> (Data). Ligue <b class="w">Logistic Regression</b> e <b class="w">kNN</b> → <b class="w">Test and Score</b> (Learner).</label></li><li><label><input type="checkbox">Abra o <b class="w">Test and Score</b>: <b>Cross validation</b>, 10 folds. Anote a acurácia (CA) e a AUC de cada modelo. Compare a CA com o número do canto da folha.</label></li><li><label><input type="checkbox">Ligue <b class="w">Test and Score</b> → <b class="w">Confusion Matrix</b> (Evaluation Results).</label></li><li><label><input type="checkbox">Abra o <b class="w">Confusion Matrix</b>. Em <b>Show</b>, escolha <b>Number of instances</b>. Selecione um modelo por vez na lista da esquerda. As linhas são a classe real e as colunas, a classe prevista.</label></li><li><label><input type="checkbox">Para cada modelo, anote: maus previstos como bons (linha <code>mau</code>, coluna <code>bom</code>) e bons previstos como maus (linha <code>bom</code>, coluna <code>mau</code>).</label></li><li><label><input type="checkbox">Calcule o custo de cada modelo: <b>5 × (maus aprovados) + 1 × (bons negados)</b>. Calcule também o custo de aprovar todo mundo.</label></li></ol><div class="obs"><p><span class="lbl">Observe.</span> O kNN sem normalização perde para "aprovar todo mundo" em acurácia. A regressão logística ganha em acurácia, em AUC e em custo.</p><p>Os dois erros não valem o mesmo. Um modelo com acurácia maior pode custar mais, se os erros dele forem do tipo caro.</p></div><details class="check"><summary><span class="lbl">Confira:</span> números esperados (10 folds; variações de 1 a 2 pontos são normais)</summary><table><thead><tr><th>Modelo</th><th class=n>Acurácia</th><th class=n>AUC</th><th class=n>Maus aprovados</th><th class=n>Bons negados</th><th class=n>Custo</th></tr></thead><tbody><tr><td>Aprovar todo mundo</td><td class=n>0,700</td><td class=n>0,500</td><td class=n>300</td><td class=n>0</td><td class=n>1.500</td></tr><tr><td>Regressão logística</td><td class=n>0,749</td><td class=n>0,785</td><td class=n>158</td><td class=n>93</td><td class=n>883</td></tr><tr><td>kNN, k = 5, sem normalizar</td><td class=n>0,647</td><td class=n>0,563</td><td class=n>230</td><td class=n>123</td><td class=n>1.273</td></tr></tbody></table></details></section><section id="quebrar"><h2 class="sec">3. Quebrar o modelo: quem são os erros, e onde fica o corte<span class="min">40–50 min</span></h2><p>Um classificador dá uma probabilidade, e alguém escolhe o corte que a transforma em "bom" ou "mau". O padrão é 0,5. Com erros de custo diferente, o padrão raramente é a melhor escolha.</p><ol class="todo"><li><label><input type="checkbox">No <b class="w">Confusion Matrix</b>, com a regressão logística selecionada, clique na célula "mau real, previsto bom". Adicione um <b class="w">Data Table</b> e ligue <b class="w">Confusion Matrix</b> → <b class="w">Data Table</b> (Selected Data). Esses são os clientes que o modelo aprovaria e que deram prejuízo.</label></li><li><label><input type="checkbox">Ligue <b class="w">File</b> → <b class="w">Logistic Regression</b> (Data). Depois <b class="w">Logistic Regression</b> → <b class="w">Predictions</b> (Model → Predictors) e <b class="w">File</b> → <b class="w">Predictions</b> (Data).</label></li><li><label><input type="checkbox">Abra o <b class="w">Predictions</b>. Clique no cabeçalho da coluna de probabilidade de <code>mau</code> para ordenar do maior para o menor. Desça até a probabilidade cruzar 0,30: o número da linha é quantos clientes seriam negados com esse corte.</label></li><li><label><input type="checkbox">Repita para 0,20. Mais negados, menos maus aprovados: o custo cai ou sobe? Até onde vale a pena baixar o corte?</label></li><li><label><input type="checkbox">Ligue <b class="w">Preprocess</b> → <b class="w">kNN</b> (Preprocessor). O Preprocess já normaliza as colunas para [0, 1]. Veja no <b class="w">Test and Score</b> o que muda na acurácia do kNN.</label></li></ol><div class="obs"><p><span class="lbl">Observe.</span> O <b class="w">Predictions</b> aqui usa o modelo treinado em todos os 1.000 clientes e avalia nos mesmos clientes, então os números saem um pouco melhores que na validação cruzada. A direção é a mesma: baixar o corte derruba a acurácia e reduz o custo, até certo ponto.</p><p>Na validação cruzada, o custo mínimo fica perto do corte 0,2, onde o banco nega mais da metade dos pedidos.</p></div><details class="check"><summary><span class="lbl">Confira:</span> números esperados</summary><p>Validação cruzada (10 folds), regressão logística, negar quando P(mau) ≥ corte:</p><table><thead><tr><th>Corte</th><th class=n>Acurácia</th><th class=n>Negados</th><th class=n>Maus aprovados</th><th class=n>Bons negados</th><th class=n>Custo</th></tr></thead><tbody><tr><td>0,50</td><td class=n>0,749</td><td class=n>235</td><td class=n>158</td><td class=n>93</td><td class=n>883</td></tr><tr><td>0,40</td><td class=n>0,730</td><td class=n>326</td><td class=n>122</td><td class=n>148</td><td class=n>758</td></tr><tr><td>0,30</td><td class=n>0,709</td><td class=n>429</td><td class=n>81</td><td class=n>210</td><td class=n>615</td></tr><tr><td>0,20</td><td class=n>0,663</td><td class=n>551</td><td class=n>43</td><td class=n>294</td><td class=n>509</td></tr><tr><td>0,15</td><td class=n>0,606</td><td class=n>628</td><td class=n>33</td><td class=n>361</td><td class=n>526</td></tr></tbody></table><p>No <b class="w">Predictions</b> (treino e teste nos mesmos dados): corte 0,30 nega cerca de 434 e custa cerca de 518; corte 0,20 nega cerca de 565 e custa cerca de 493.</p><p>kNN com Preprocess: acurácia sobe de 0,647 para cerca de 0,729; com k = 15, 0,744.</p></details></section><section id="fechar"><h2 class="sec">4. Anotar e discutir<span class="min">50–60 min</span></h2><p>Cada dupla diz em voz alta o custo do melhor modelo que encontrou (modelo e corte). Depois, discutam:</p>
+<ul>
+<li>Se a acurácia não serve, que número você pediria no relatório de um modelo de crédito?</li>
+<li>Os valores 5 e 1 da matriz de custo vieram de onde? Quem no banco saberia os valores reais? O que mudaria se negar um bom cliente custasse 2?</li>
+<li><code>estado_civil_sexo</code> está entre as colunas de maior peso. Tirá-la (com um <b class="w">Select Columns</b> entre <b class="w">File</b> e <b class="w">Test and Score</b>) muda a acurácia em menos de um ponto. Mantê-la expõe o banco a uma decisão de crédito que depende de sexo e estado civil. O que o Banrisul faria?</li>
+<li>O conjunto tem 30 anos e é de outro país. O que precisaria ser verdade para o modelo valer para clientes de hoje?</li>
+</ul></section>
+<p class="note">Marcações das etapas ficam salvas neste navegador. <button class="btn" id="reset" type="button" style="font-size:.85rem;padding:3px 8px">Limpar marcações</button></p>
+<nav class="nav"><span><a href="p1-regressao.html">← Prática 1: regressão</a></span><span><a href="p3-agrupamento.html">Prática 3: agrupamento →</a></span></nav>
+</div>
+<script>
+(function(){const b=document.getElementById('theme');if(!b)return;
+const dark=()=>{const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme:dark)').matches;};
+b.addEventListener('click',()=>{const next=dark()?'light':'dark';document.documentElement.dataset.theme=next;
+  try{localStorage.setItem('theme',next)}catch(e){}});})();
+(function(){const key='todo:'+location.pathname;let st={};try{st=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+document.querySelectorAll('ol.todo li').forEach((li,i)=>{const cb=li.querySelector('input');if(!cb)return;const id=li.closest('section').id+':'+i;
+  if(st[id]){cb.checked=true;li.classList.add('done');}
+  cb.addEventListener('change',()=>{li.classList.toggle('done',cb.checked);st[id]=cb.checked;try{localStorage.setItem(key,JSON.stringify(st))}catch(e){}});});
+const r=document.getElementById('reset');if(r)r.addEventListener('click',()=>{st={};try{localStorage.removeItem(key)}catch(e){}
+  document.querySelectorAll('ol.todo li').forEach(li=>{const cb=li.querySelector('input');if(cb)cb.checked=false;li.classList.remove('done');});});})();
+</script>
+</body>
+</html>
