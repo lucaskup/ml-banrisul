@@ -20,12 +20,8 @@
 <link id="6" source_node_id="3" sink_node_id="7" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="annotated_data" sink_channel_id="data" />
 <link id="7" source_node_id="7" sink_node_id="8" source_channel="Transformed Data" sink_channel="Data" enabled="true" source_channel_id="transformed_data" sink_channel_id="data" />
 </links><annotations>
-<text id="0" type="text/plain" rect="(80, 40, 520, 40)" font-family="Helvetica" font-size="13">Prática 3 – Agrupamento: quem são os clientes de cartão?
-8.950 clientes, 17 variáveis de uso (sem rótulo).</text>
-<text id="1" type="text/plain" rect="(620, 40, 460, 90)" font-family="Helvetica" font-size="13">Passo A: File → k-Means (Data); em k-Means, marque &quot;From 2 to 10&quot; e veja a silhueta por k.
-Passo B: k-Means → Silhouette Plot, Scatter Plot e Box Plot (agrupe por Cluster).
-Passo C (quebra): desmarque &quot;Normalize columns&quot; no k-Means e refaça.</text>
-<text id="2" type="text/plain" rect="(80, 620, 520, 40)" font-family="Helvetica" font-size="13">Entregável: um nome e uma ação comercial para cada grupo.</text>
+<text id="0" type="text/plain" rect="(80, 30, 760, 70)" font-family="Helvetica" font-size="13">Prática 3 – Agrupamento: quem são os clientes de cartão? Sem alvo. 8.950 clientes, 17 variáveis de uso.
+Gabarito com tudo ligado. Roteiro: https://lucaskup.github.io/ml-banrisul/p3-agrupamento.html</text>
 </annotations><thumbnail /><node_properties>
 <properties node_id="0" format="literal">{&#x27;source&#x27;: 1, &#x27;recent_urls&#x27;: [&#x27;https://lucaskup.github.io/ml-banrisul/data/cartao.csv&#x27;], &#x27;url&#x27;: &#x27;https://lucaskup.github.io/ml-banrisul/data/cartao.csv&#x27;, &#x27;sheet_names&#x27;: {}, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 1}</properties>
 <properties node_id="3" format="literal">{&#x27;k&#x27;: 3, &#x27;k_from&#x27;: 2, &#x27;k_to&#x27;: 10, &#x27;optimize_k&#x27;: True, &#x27;normalize&#x27;: True, &#x27;max_iterations&#x27;: 300, &#x27;n_init&#x27;: 10, &#x27;smart_init&#x27;: 0, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 2}</properties>

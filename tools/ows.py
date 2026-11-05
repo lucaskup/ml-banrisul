@@ -1,6 +1,11 @@
 import json, html
 REG=json.load(open(__import__("pathlib").Path(__file__).parent/"reg.json"))
 BASE='https://lucaskup.github.io/ml-banrisul/data/'
+SITE=BASE.removesuffix('data/')
+def header(full,page,text):
+    """Única anotação do workflow: o passo a passo fica no roteiro do site, não aqui."""
+    tail='Gabarito com tudo ligado.' if full else 'Os widgets da esquerda já estão ligados; ligar e configurar os da direita é o trabalho da prática.'
+    return [(80,30,760,70,f'{text}\n{tail} Roteiro: {SITE}{page}')]
 def scheme(title,desc,nodes,links,notes,props):
     """nodes: list of (key,name,x,y,title?) ; links: (src_key,src_channel,dst_key,dst_channel) ; notes: (x,y,w,h,text)"""
     idx={k:i for i,(k,*_) in enumerate(nodes)}
@@ -30,9 +35,7 @@ def p1(full):
            ('lin','Linear Regression',650,150),('knn','kNN',650,300),('pre','Preprocess',650,450,'Preprocess (normalizar)'),('ts','Test and Score',900,220),('pred','Predictions',900,400)]
     links=[('file','Data','tab','Data'),('file','Data','fs','Data'),('file','Data','sp','Data'),('file','Data','dist','Data')]
     if full: links+=[('file','Data','ts','Data'),('lin','Learner','ts','Learner'),('knn','Learner','ts','Learner'),('file','Data','lin','Data'),('lin','Model','pred','Predictors'),('file','Data','pred','Data'),('pre','Preprocessor','knn','Preprocessor')]
-    notes=[(80,40,480,40,'Prática 1 – Regressão: quanto custa o seguro desta pessoa?\nTarget: custo_anual (US$/ano). Dados: 1.338 segurados.'),
-           (620,40,420,90,'Passo A: ligue File → Test and Score (Data), e os dois modelos → Test and Score (Learner).\nPasso B: ligue File → Linear Regression → Predictions, e File → Predictions (Data).\nPasso C (quebra): Preprocess → kNN (Preprocessor), com Normalize Features marcado.'),
-           (80,640,500,40,'Alvo: ficar com RMSE abaixo de 6.500 em validação cruzada (10 folds).')]
+    notes=header(full,'p1-regressao.html','Prática 1 – Regressão: quanto custa o seguro desta pessoa? Alvo: custo_anual (US$/ano). 1.338 segurados.')
     props={'file':fileprops('insurance.csv'),'pre':PREPROPS,'ts':{'n_folds':2,'resampling':0,'controlAreaVisible':True,'__version__':3},'knn':{'n_neighbors':5,'metric_index':0,'weight_index':0,'controlAreaVisible':True,'__version__':1}}
     # n_folds index: Orange NFolds=[2,3,5,10,20] -> index 3 = 10
     props['ts']['n_folds']=3
@@ -43,9 +46,7 @@ def p2(full):
            ('log','Logistic Regression',650,150),('knn','kNN',650,300),('pre','Preprocess',650,450,'Preprocess (normalizar)'),('ts','Test and Score',900,220),('cm','Confusion Matrix',1150,220),('pred','Predictions',900,420)]
     links=[('file','Data','tab','Data'),('file','Data','dist','Data'),('file','Data','rank','Data')]
     if full: links+=[('file','Data','ts','Data'),('log','Learner','ts','Learner'),('knn','Learner','ts','Learner'),('ts','Evaluation Results','cm','Evaluation Results'),('pre','Preprocessor','knn','Preprocessor'),('file','Data','log','Data'),('log','Model','pred','Predictors'),('file','Data','pred','Data')]
-    notes=[(80,40,520,40,'Prática 2 – Classificação: aprovar ou negar o crédito?\nTarget: risco (bom/mau). 1.000 solicitantes, 30 % maus pagadores.'),
-           (620,40,460,90,'Passo A: File → Test and Score (Data); Logistic Regression e kNN → Test and Score (Learner).\nPasso B: Test and Score → Confusion Matrix.\nPasso C: Preprocess (Normalize Features) → kNN. Passo D: File → Logistic Regression → Predictions.'),
-           (80,520,520,60,'Custo: cada mau aprovado custa 5; cada bom negado custa 1.\nCusto do modelo = 5 × (maus aprovados) + 1 × (bons negados). Qual modelo custa menos?')]
+    notes=header(full,'p2-classificacao.html','Prática 2 – Classificação: aprovar ou negar o crédito? Alvo: risco (bom/mau). 1.000 solicitantes.')
     props={'file':fileprops('german_credit.csv'),'pre':PREPROPS,'ts':{'n_folds':3,'resampling':0,'controlAreaVisible':True,'__version__':3},'knn':{'n_neighbors':5,'metric_index':0,'weight_index':0,'controlAreaVisible':True,'__version__':1}}
     return scheme('P2 – Classificação (crédito)','Risco de crédito: regressão logística e kNN',nodes,links,notes,props)
 
@@ -53,9 +54,7 @@ def p3(full):
     nodes=[('file','File',100,250,'cartao.csv'),('tab','Data Table',350,100),('fs','Feature Statistics',350,250),('km','k-Means',650,250),('sil','Silhouette Plot',900,120),('sp','Scatter Plot',900,250),('box','Box Plot',900,380),('pca','PCA',650,450),('sp2','Scatter Plot',900,520,'Scatter Plot (PCA)')]
     links=[('file','Data','tab','Data'),('file','Data','fs','Data')]
     if full: links+=[('file','Data','km','Data'),('km','Data','sil','Data'),('km','Data','sp','Data'),('km','Data','box','Data'),('km','Data','pca','Data'),('pca','Transformed Data','sp2','Data')]
-    notes=[(80,40,520,40,'Prática 3 – Agrupamento: quem são os clientes de cartão?\n8.950 clientes, 17 variáveis de uso (sem rótulo).'),
-           (620,40,460,90,'Passo A: File → k-Means (Data); em k-Means, marque "From 2 to 10" e veja a silhueta por k.\nPasso B: k-Means → Silhouette Plot, Scatter Plot e Box Plot (agrupe por Cluster).\nPasso C (quebra): desmarque "Normalize columns" no k-Means e refaça.'),
-           (80,620,520,40,'Entregável: um nome e uma ação comercial para cada grupo.')]
+    notes=header(full,'p3-agrupamento.html','Prática 3 – Agrupamento: quem são os clientes de cartão? Sem alvo. 8.950 clientes, 17 variáveis de uso.')
     props={'file':fileprops('cartao.csv'),'km':{'k':3,'k_from':2,'k_to':10,'optimize_k':True,'normalize':True,'max_iterations':300,'n_init':10,'smart_init':0,'controlAreaVisible':True,'__version__':2}}
     return scheme('P3 – Agrupamento (cartão)','Segmentação de clientes de cartão com k-Means',nodes,links,notes,props)
 

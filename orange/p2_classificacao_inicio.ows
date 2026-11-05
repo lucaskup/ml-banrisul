@@ -16,13 +16,8 @@
 <link id="1" source_node_id="0" sink_node_id="2" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
 <link id="2" source_node_id="0" sink_node_id="3" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
 </links><annotations>
-<text id="0" type="text/plain" rect="(80, 40, 520, 40)" font-family="Helvetica" font-size="13">Prática 2 – Classificação: aprovar ou negar o crédito?
-Target: risco (bom/mau). 1.000 solicitantes, 30 % maus pagadores.</text>
-<text id="1" type="text/plain" rect="(620, 40, 460, 90)" font-family="Helvetica" font-size="13">Passo A: File → Test and Score (Data); Logistic Regression e kNN → Test and Score (Learner).
-Passo B: Test and Score → Confusion Matrix.
-Passo C: Preprocess (Normalize Features) → kNN. Passo D: File → Logistic Regression → Predictions.</text>
-<text id="2" type="text/plain" rect="(80, 520, 520, 60)" font-family="Helvetica" font-size="13">Custo: cada mau aprovado custa 5; cada bom negado custa 1.
-Custo do modelo = 5 × (maus aprovados) + 1 × (bons negados). Qual modelo custa menos?</text>
+<text id="0" type="text/plain" rect="(80, 30, 760, 70)" font-family="Helvetica" font-size="13">Prática 2 – Classificação: aprovar ou negar o crédito? Alvo: risco (bom/mau). 1.000 solicitantes.
+Os widgets da esquerda já estão ligados; ligar e configurar os da direita é o trabalho da prática. Roteiro: https://lucaskup.github.io/ml-banrisul/p2-classificacao.html</text>
 </annotations><thumbnail /><node_properties>
 <properties node_id="0" format="literal">{&#x27;source&#x27;: 1, &#x27;recent_urls&#x27;: [&#x27;https://lucaskup.github.io/ml-banrisul/data/german_credit.csv&#x27;], &#x27;url&#x27;: &#x27;https://lucaskup.github.io/ml-banrisul/data/german_credit.csv&#x27;, &#x27;sheet_names&#x27;: {}, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 1}</properties>
 <properties node_id="6" format="literal">{&#x27;storedsettings&#x27;: {&#x27;name&#x27;: &#x27;&#x27;, &#x27;preprocessors&#x27;: [(&#x27;orange.preprocess.scale&#x27;, {&#x27;method&#x27;: 3})]}, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 2}</properties>

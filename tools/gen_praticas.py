@@ -167,7 +167,7 @@ p1 = before(1, 'p1_regressao', 'insurance.csv') + sec('explorar', '1. Explorar o
   'Abra o <b class="w">kNN</b> e confira que <b>Number of neighbors</b> é 5. Ainda não mude nada.',
   'Ligue <b class="w">File</b> → <b class="w">Linear Regression</b> (Data). Depois ligue <b class="w">Linear Regression</b> → <b class="w">Predictions</b> e escolha <b>Model → Predictors</b>. Por fim, <b class="w">File</b> → <b class="w">Predictions</b> (Data).',
   'Adicione um <b class="w">Data Table</b> novo (categoria Data) e ligue <b class="w">Linear Regression</b> → esse <b class="w">Data Table</b>, escolhendo a saída <b>Coefficients</b>. Anote o intercepto e os coeficientes de <code>idade</code>, <code>imc</code>, <code>filhos</code> e <code>fumante</code>.',
-  'Com os coeficientes, calcule à mão o custo previsto para uma pessoa de 45 anos, homem, IMC 30, 2 filhos, fumante, região sudeste. Depois calcule a mesma pessoa não fumante.',
+  'Com os coeficientes, calcule à mão o custo previsto para uma pessoa de 45 anos, homem, IMC 30, 2 filhos, fumante, região sudeste. Some: intercepto + idade × 45 + IMC × 30 + filhos × 2 + o coeficiente de <code>sexo = homem</code> + o de <code>regiao = sudeste</code> + o de <code>fumante = sim</code>. Cada coluna categórica tem um coeficiente por nível; entra só o nível da pessoa. Depois calcule a mesma pessoa não fumante, trocando o último termo pelo coeficiente de <code>fumante = não</code>.',
  ]) +
  obs('RMSE e MAE estão em dólares por ano; R² é a fração da variação do custo que o modelo explica. O kNN com k = 5 fica bem atrás da regressão linear. Guarde esse número para comparar com o kNN normalizado.',
      'O Orange divide o efeito de uma coluna binária entre os dois níveis: fumante = sim ganha um coeficiente positivo e fumante = não o mesmo valor negativo. A diferença entre fumar e não fumar é a soma dos dois.') +
@@ -181,7 +181,7 @@ p1 = before(1, 'p1_regressao', 'insurance.csv') + sec('explorar', '1. Explorar o
   'Ligue <b class="w">Preprocess</b> → <b class="w">kNN</b>. Na janela, escolha <b>Preprocessor → Preprocessor</b>.',
   'Volte ao <b class="w">Test and Score</b> e anote de novo RMSE, MAE e R² do kNN.',
   'Abra o <b class="w">kNN</b>, mude <b>Number of neighbors</b> para 15 e veja o que acontece com o erro. Depois volte para 5.',
-  'Se sobrar tempo: adicione um <b class="w">Select Columns</b> (categoria Data) entre <b class="w">File</b> e <b class="w">Test and Score</b>, mova <code>fumante</code> para <b>Ignored</b> e veja o R² da regressão linear. Depois faça o contrário, deixando só <code>fumante</code> como feature.',
+  'Se sobrar tempo: adicione um <b class="w">Select Columns</b> (categoria Data). Ligue <b class="w">File</b> → <b class="w">Select Columns</b> e <b class="w">Select Columns</b> → <b class="w">Test and Score</b> (Data); a ligação nova substitui a que vinha direto do File. No Select Columns, mova <code>fumante</code> para <b>Ignored</b> e veja o R² da regressão linear. Depois faça o contrário, deixando só <code>fumante</code> como feature.',
  ]) +
  obs('Só a normalização muda o kNN de pior para melhor que a regressão linear. Nenhum dado novo entrou; mudou a régua com que o modelo mede distância.',
      'A regressão linear nem percebe a normalização: multiplicar uma coluna por uma constante só muda o coeficiente dela.') +
@@ -216,7 +216,7 @@ p2 = before(2, 'p2_classificacao', 'german_credit.csv') + sec('explorar', '1. Ex
  """<p>Dois classificadores entram na validação cruzada: regressão logística e kNN. A matriz de confusão mostra os dois tipos de erro, e é dela que sai o custo.</p>""" +
  todo([
   'Ligue <b class="w">File</b> → <b class="w">Test and Score</b> (Data). Ligue <b class="w">Logistic Regression</b> e <b class="w">kNN</b> → <b class="w">Test and Score</b> (Learner).',
-  'Abra o <b class="w">Test and Score</b>: <b>Cross validation</b>, 10 folds. Anote a acurácia (CA) e a AUC de cada modelo. Compare a CA com o número do canto da folha.',
+  'Abra o <b class="w">Test and Score</b>: <b>Cross validation</b>, 10 folds. Anote a acurácia (CA) e a AUC de cada modelo. A AUC é a chance de o modelo dar probabilidade de mau maior a um mau pagador do que a um bom, os dois sorteados ao acaso: 0,5 é sorteio, 1 é perfeito. Compare a CA com o número do canto da folha.',
   'Ligue <b class="w">Test and Score</b> → <b class="w">Confusion Matrix</b> (Evaluation Results).',
   'Abra o <b class="w">Confusion Matrix</b>. Em <b>Show</b>, escolha <b>Number of instances</b>. Selecione um modelo por vez na lista da esquerda. As linhas são a classe real e as colunas, a classe prevista.',
   'Para cada modelo, anote: maus previstos como bons (linha <code>mau</code>, coluna <code>bom</code>) e bons previstos como maus (linha <code>bom</code>, coluna <code>mau</code>).',
@@ -232,9 +232,9 @@ p2 = before(2, 'p2_classificacao', 'german_credit.csv') + sec('explorar', '1. Ex
 ) + sec('quebrar', '3. Quebrar o modelo: quem são os erros, e onde fica o corte', '40–50 min',
  """<p>Um classificador dá uma probabilidade, e alguém escolhe o corte que a transforma em "bom" ou "mau". O padrão é 0,5. Com erros de custo diferente, o padrão raramente é a melhor escolha.</p>""" +
  todo([
-  'No <b class="w">Confusion Matrix</b>, com a regressão logística selecionada, clique na célula "mau real, previsto bom". Adicione um <b class="w">Data Table</b> e ligue <b class="w">Confusion Matrix</b> → <b class="w">Data Table</b> (Selected Data). Esses são os clientes que o modelo aprovaria e que deram prejuízo.',
+  'No <b class="w">Confusion Matrix</b>, com a regressão logística selecionada, clique na célula "mau real, previsto bom". Adicione um <b class="w">Data Table</b> e ligue <b class="w">Confusion Matrix</b> → <b class="w">Data Table</b> (Selected Data). Esses são os clientes que o modelo aprovaria e que deram prejuízo. Olhe <code>conta_corrente</code> e <code>prazo_meses</code> nesses clientes: o que eles têm em comum com os bons pagadores?',
   'Ligue <b class="w">File</b> → <b class="w">Logistic Regression</b> (Data). Depois <b class="w">Logistic Regression</b> → <b class="w">Predictions</b> (Model → Predictors) e <b class="w">File</b> → <b class="w">Predictions</b> (Data).',
-  'Abra o <b class="w">Predictions</b>. Clique no cabeçalho da coluna de probabilidade de <code>mau</code> para ordenar do maior para o menor. Desça até a probabilidade cruzar 0,30: o número da linha é quantos clientes seriam negados com esse corte.',
+  'Abra o <b class="w">Predictions</b>. No topo, em <b>Show probabilities for</b>, escolha <code>mau</code>: a coluna do modelo passa a mostrar só a probabilidade de mau. Clique no cabeçalho dessa coluna para ordenar; se vier do menor para o maior, clique de novo. Desça até a probabilidade cruzar 0,30: o número da linha, na margem esquerda, é quantos clientes seriam negados com esse corte.',
   'Repita para 0,20. Mais negados, menos maus aprovados: o custo cai ou sobe? Até onde vale a pena baixar o corte?',
   'Ligue <b class="w">Preprocess</b> → <b class="w">kNN</b> (Preprocessor). O Preprocess já normaliza as colunas para [0, 1]. Veja no <b class="w">Test and Score</b> o que muda na acurácia do kNN.',
  ]) +
@@ -244,13 +244,13 @@ p2 = before(2, 'p2_classificacao', 'german_credit.csv') + sec('explorar', '1. Ex
    '<p>Validação cruzada (10 folds), regressão logística, negar quando P(mau) ≥ corte:</p>' +
    tbl(['Corte', 'Acurácia', 'Negados', 'Maus aprovados', 'Bons negados', 'Custo'], [
     ['0,50', '0,749', '235', '158', '93', '883'], ['0,40', '0,730', '326', '122', '148', '758'], ['0,30', '0,709', '429', '81', '210', '615'], ['0,20', '0,663', '551', '43', '294', '509'], ['0,15', '0,606', '628', '33', '361', '526']]) +
-   '<p>No <b class="w">Predictions</b> (treino e teste nos mesmos dados): corte 0,30 nega cerca de 434 e custa cerca de 518; corte 0,20 nega cerca de 565 e custa cerca de 493.</p><p>kNN com Preprocess: acurácia sobe de 0,647 para cerca de 0,729; com k = 15, 0,744.</p>')
+   '<p>Maus aprovados: cerca de 30 % não têm conta corrente (entre todos os maus são 15 %; entre os bons, 50 %) e o prazo mediano é 18 meses, igual ao dos bons. O modelo os aprova porque, nas colunas que mais pesam, eles se parecem com bons pagadores.</p><p>No <b class="w">Predictions</b> (treino e teste nos mesmos dados): corte 0,30 nega cerca de 434 e custa cerca de 518; corte 0,20 nega cerca de 565 e custa cerca de 493.</p><p>kNN com Preprocess: acurácia sobe de 0,647 para cerca de 0,729; com k = 15, 0,744.</p>')
 ) + sec('fechar', '4. Anotar e discutir', '50–60 min',
  """<p>Cada dupla diz em voz alta o custo do melhor modelo que encontrou (modelo e corte). Depois, discutam:</p>
 <ul>
 <li>Se a acurácia não serve, que número você pediria no relatório de um modelo de crédito?</li>
 <li>Os valores 5 e 1 da matriz de custo vieram de onde? Quem no banco saberia os valores reais? O que mudaria se negar um bom cliente custasse 2?</li>
-<li><code>estado_civil_sexo</code> está entre as colunas de maior peso. Tirá-la (com um <b class="w">Select Columns</b> entre <b class="w">File</b> e <b class="w">Test and Score</b>) muda a acurácia em menos de um ponto. Mantê-la expõe o banco a uma decisão de crédito que depende de sexo e estado civil. O que o Banrisul faria?</li>
+<li><code>estado_civil_sexo</code> está entre as colunas de maior peso. Tirá-la (um <b class="w">Select Columns</b> ligado ao <b class="w">File</b> e, dele, ao <b class="w">Test and Score</b>, com a coluna em <b>Ignored</b>) muda a acurácia em menos de um ponto. Mantê-la expõe o banco a uma decisão de crédito que depende de sexo e estado civil. O que o Banrisul faria?</li>
 <li>O conjunto tem 30 anos e é de outro país. O que precisaria ser verdade para o modelo valer para clientes de hoje?</li>
 </ul>""")
 P2 = page('p2-classificacao.html', 2, 'Classificação: aprovar ou negar o crédito?',
@@ -297,7 +297,7 @@ p3 = before(3, 'p3_agrupamento', 'cartao.csv') + sec('explorar', '1. Explorar os
  todo([
   'No <b class="w">k-Means</b>, mude para <b>Fixed: 3</b> e desmarque <b>Normalize columns</b>. Olhe de novo o <b class="w">Box Plot</b> de <code>saldo</code> e <code>compras</code> e o tamanho dos grupos no <b class="w">Silhouette Plot</b>.',
   'Marque <b>Normalize columns</b> de volta.',
-  'Se sobrar tempo: adicione um <b class="w">Select Columns</b> (categoria Data) entre <b class="w">File</b> e <b class="w">k-Means</b>, mova <code>saque</code> e <code>freq_saque</code> para <b>Ignored</b> e rode de novo com k = 3. Que grupo desapareceu?',
+  'Se sobrar tempo: adicione um <b class="w">Select Columns</b> (categoria Data). Ligue <b class="w">File</b> → <b class="w">Select Columns</b> e <b class="w">Select Columns</b> → <b class="w">k-Means</b> (Data); a ligação nova substitui a que vinha direto do File. Mova <code>saque</code> e <code>freq_saque</code> para <b>Ignored</b> e rode de novo com k = 3. Que grupo desapareceu?',
   'Ligue <b class="w">k-Means</b> → <b class="w">PCA</b> e <b class="w">PCA</b> → <b class="w">Scatter Plot (PCA)</b>, escolhendo <b>Transformed Data → Data</b>. No gráfico, PC1 em x, PC2 em y e <code>Cluster</code> em <b>Color</b>.',
  ]) +
  obs('Sem normalizar, os grupos viram pequeno, médio e grande em dinheiro, e o terceiro grupo tem 134 pessoas. O comportamento (compra ou saca) some, porque as colunas de frequência deixam de pesar.',

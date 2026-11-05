@@ -24,12 +24,8 @@
 <link id="9" source_node_id="0" sink_node_id="9" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
 <link id="10" source_node_id="7" sink_node_id="6" source_channel="Preprocessor" sink_channel="Preprocessor" enabled="true" source_channel_id="preprocessor" sink_channel_id="preprocessor" />
 </links><annotations>
-<text id="0" type="text/plain" rect="(80, 40, 480, 40)" font-family="Helvetica" font-size="13">Prática 1 – Regressão: quanto custa o seguro desta pessoa?
-Target: custo_anual (US$/ano). Dados: 1.338 segurados.</text>
-<text id="1" type="text/plain" rect="(620, 40, 420, 90)" font-family="Helvetica" font-size="13">Passo A: ligue File → Test and Score (Data), e os dois modelos → Test and Score (Learner).
-Passo B: ligue File → Linear Regression → Predictions, e File → Predictions (Data).
-Passo C (quebra): Preprocess → kNN (Preprocessor), com Normalize Features marcado.</text>
-<text id="2" type="text/plain" rect="(80, 640, 500, 40)" font-family="Helvetica" font-size="13">Alvo: ficar com RMSE abaixo de 6.500 em validação cruzada (10 folds).</text>
+<text id="0" type="text/plain" rect="(80, 30, 760, 70)" font-family="Helvetica" font-size="13">Prática 1 – Regressão: quanto custa o seguro desta pessoa? Alvo: custo_anual (US$/ano). 1.338 segurados.
+Gabarito com tudo ligado. Roteiro: https://lucaskup.github.io/ml-banrisul/p1-regressao.html</text>
 </annotations><thumbnail /><node_properties>
 <properties node_id="0" format="literal">{&#x27;source&#x27;: 1, &#x27;recent_urls&#x27;: [&#x27;https://lucaskup.github.io/ml-banrisul/data/insurance.csv&#x27;], &#x27;url&#x27;: &#x27;https://lucaskup.github.io/ml-banrisul/data/insurance.csv&#x27;, &#x27;sheet_names&#x27;: {}, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 1}</properties>
 <properties node_id="7" format="literal">{&#x27;storedsettings&#x27;: {&#x27;name&#x27;: &#x27;&#x27;, &#x27;preprocessors&#x27;: [(&#x27;orange.preprocess.scale&#x27;, {&#x27;method&#x27;: 3})]}, &#x27;controlAreaVisible&#x27;: True, &#x27;__version__&#x27;: 2}</properties>
